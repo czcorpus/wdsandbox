@@ -1,0 +1,14 @@
+{
+    "address": "localhost",
+    "port": 3000,
+    "staticFilesUrl": "/assets/",
+    "theme": "default.less",
+    "languages": {
+        "en-US": "Angličtina",
+        "cs-CZ": "Čeština"
+    },
+    "develServer": {
+        "port": 9001,
+        "urlRootPath": "/"
+    }
+}
