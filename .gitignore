@@ -1,0 +1,13 @@
+node_modules/
+.awcache/
+
+dist
+dist-server
+conf/server.json
+conf/wdglance.json
+conf/layouts.json
+conf/tiles.json
+html/vendor/*/
+
+
+
