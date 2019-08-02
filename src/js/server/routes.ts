@@ -30,7 +30,11 @@ import { GlobalComponents } from '../views/global';
 import { init as layoutViewInit, LayoutProps } from '../views/layout';
 import { SandboxRootComponentProps } from '../views/sandbox';
 import { ServerSideActionDispatcher } from './core';
-import { HTTPAction } from './actions';
+
+
+enum HTTPAction {
+    MAIN = '/'
+}
 
 
 interface RenderResultArgs {

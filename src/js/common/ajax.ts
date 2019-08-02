@@ -137,12 +137,6 @@ const prepareAjax = (method:string, url:string, args:AjaxArgs, options?:AjaxOpti
     }
 };
 
-
-interface CachedValue<T> {
-    cached:boolean;
-    value:T;
-}
-
 export type AjaxCall<T> = (method:string, url:string, args:AjaxArgs, options?:AjaxOptions)=>Observable<T>;
 
 
