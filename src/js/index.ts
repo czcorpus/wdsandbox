@@ -26,7 +26,7 @@ import * as translations from 'translations';
 import { AppTools } from './appTools';
 import { encodeArgs } from './common/ajax';
 import { GlobalComponents } from './views/global';
-import { createRootComponent } from './app';
+import { createRootComponent } from './sandbox';
 import { ScreenProps } from './common/hostPage';
 import { SandboxConf } from './conf';
 
