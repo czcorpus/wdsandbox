@@ -17,12 +17,13 @@
  */
 
 import { StatelessModel, Action, SEDispatcher } from 'kombo';
-import { ActionName, Actions } from './actions';
+import { ActionName, Actions, CoreActionName, CoreActions } from './actions';
 
 
 export interface MyModelState {
     isBusy:boolean;
     numOfClicks:number;
+    screenMode:{width:number; height:number; isMobile:boolean}|null;
 }
 
 export class MyModel extends StatelessModel<MyModelState> {
@@ -45,6 +46,15 @@ export class MyModel extends StatelessModel<MyModelState> {
                 const newState = this.copyState(state);
                 newState.isBusy = false;
                 newState.numOfClicks = action.payload.result;
+                return newState;
+            },
+            [CoreActionName.SetScreenMode]: (state, action:CoreActions.SetScreenMode) => {
+                const newState = this.copyState(state);
+                newState.screenMode = {
+                    width: action.payload.innerWidth,
+                    height: action.payload.innerHeight,
+                    isMobile: action.payload.isMobile
+                };
                 return newState;
             }
         };

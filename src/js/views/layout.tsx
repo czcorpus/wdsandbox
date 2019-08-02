@@ -57,9 +57,10 @@ export function init(ut:ViewUtils<GlobalComponents>):React.SFC<LayoutProps> {
                     <header className="sandbox-header">
                         <h1>
                             <a href={props.sandboxConf.rootUrl} title={ut.translate('global__sandbox_title')}>
-                                TypeScript + React + RxJS-based custom stage management sandbox
+                                ÚČNK web-dev sandbox
                             </a>
                         </h1>
+                        <em>{ut.translate('global__sandbox_subtitle')}</em>
                     </header>
                     <section className="sandbox-mount">
                         {props.RootComponent ?

@@ -75,7 +75,12 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
                     </p>
                     <p>
                         <DoubleValueButton />
-                        {this.props.isBusy ? 'working...' : null}
+                        {this.props.isBusy ? ' working...' : null}
+                    </p>
+                    <p>
+                        {this.props.screenMode !== null ?
+                        <span>{`(last screen change: ${this.props.screenMode.width} x ${this.props.screenMode.height})`}</span> :
+                        null}
                     </p>
                 </section>
             );

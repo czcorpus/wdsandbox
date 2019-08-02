@@ -48,7 +48,8 @@ export function createRootComponent({dispatcher, onResize, viewUtils}:InitIntArg
         dispatcher,
         {
             numOfClicks: 0,
-            isBusy: false
+            isBusy: false,
+            screenMode:null
         }
     );
     return sandboxViewInit(dispatcher, viewUtils, myModel);
