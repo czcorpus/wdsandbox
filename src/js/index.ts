@@ -29,6 +29,7 @@ import { GlobalComponents } from './views/global';
 import { createRootComponent } from './sandbox';
 import { ScreenProps } from './common/hostPage';
 import { SandboxConf } from './conf';
+import { CoreActions, CoreActionName } from './models/actions';
 
 declare var DocumentTouch;
 declare var require:(src:string)=>void;  // webpack
@@ -66,6 +67,7 @@ export const initClient = (mountElement:HTMLElement, conf:SandboxConf) => {
             innerWidth: window.innerWidth,
             innerHeight: window.innerHeight
         }))
+
     );
 
     const SandboxRootComponent = createRootComponent({
@@ -74,6 +76,15 @@ export const initClient = (mountElement:HTMLElement, conf:SandboxConf) => {
         onResize: windowResize$,
         viewUtils: viewUtils
     });
+
+    windowResize$.subscribe(
+        (props) => {
+            dispatcher.dispatch<CoreActions.SetScreenMode>({
+                name: CoreActionName.SetScreenMode,
+                payload: props
+            });
+        }
+    );
 
     ReactDOM.render(
         React.createElement(

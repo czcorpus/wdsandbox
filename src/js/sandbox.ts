@@ -20,7 +20,6 @@ import * as React from 'react';
 import { Observable } from 'rxjs';
 
 import { ScreenProps } from './common/hostPage';
-import { ActionName, Actions } from './models/actions';
 import { IActionDispatcher, ViewUtils } from 'kombo';
 import { AppTools } from './appTools';
 import { GlobalComponents,  init as globalCompInit  } from './views/global';
@@ -36,13 +35,15 @@ export interface InitIntArgs {
 }
 
 
-export function createRootComponent({appTools, dispatcher,
-    onResize, viewUtils}:InitIntArgs):React.FunctionComponent<SandboxRootComponentProps> {
+export function createRootComponent({dispatcher, onResize, viewUtils}:InitIntArgs):React.FunctionComponent<SandboxRootComponentProps> {
 
     const globalComponents = globalCompInit(dispatcher, viewUtils, onResize);
     viewUtils.attachComponents(globalComponents);
 
-    // -------
+    // ---------------------------------------------------------
+    // ------- HERE SANDBOX BEGINS -----------------------------
+    // ---------------------------------------------------------
+
     const myModel = new MyModel(
         dispatcher,
         {
@@ -50,18 +51,5 @@ export function createRootComponent({appTools, dispatcher,
             isBusy: false
         }
     );
-    const component = sandboxViewInit(dispatcher, viewUtils, myModel);
-
-    // -------
-
-    onResize.subscribe(
-        (props) => {
-            dispatcher.dispatch<Actions.SetScreenMode>({
-                name: ActionName.SetScreenMode,
-                payload: props
-            });
-        }
-    );
-
-    return component;
+    return sandboxViewInit(dispatcher, viewUtils, myModel);
 }
