@@ -68,8 +68,8 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
 
         render() {
             return (
-                <section>
-                    <h2>WIDGET</h2>
+                <section className="widget1">
+                    <h2>WIDGET 1</h2>
                     <p>
                         <FooButton /> <strong>num of clicks: {this.props.numOfClicks}</strong>
                     </p>

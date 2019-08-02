@@ -67,7 +67,7 @@ function createHelperServices(conf:SandboxConf):[ViewUtils<GlobalComponents>, Ap
         uiLang: conf.uiLang,
         translations: conf.translations,
         staticUrlCreator: (path) => conf.rootUrl + 'assets/' + path,
-        actionUrlCreator: (path, args) => conf.hostUrl +
+        actionUrlCreator: (path, args) => conf.rootUrl +
                 (path.substr(0, 1) === '/' ? path.substr(1) : path ) +
                 (Object.keys(args || {}).length > 0 ? '?' + encodeArgs(args) : '')
     });
@@ -114,7 +114,7 @@ export const sandboxRouter = (conf:SandboxConf) => (app:Express) => {
             sandboxConf: conf,
             layoutView: layoutViewInit(viewUtils),
             returnUrl: mkReturnUrl(req, conf.rootUrl),
-            rootView: null, //sandboxViewInit(dispatcher, viewUtils, null),
+            rootView: null, //sandboxViewInit(dispatcher, viewUtils, null), // TODO server rendering
             isMobile: false, // TODO should we detect the mode on server too
         }));
     });

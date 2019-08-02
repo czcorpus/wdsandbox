@@ -33,9 +33,9 @@ import { CoreActions, CoreActionName } from './models/actions';
 
 declare var DocumentTouch;
 declare var require:(src:string)=>void;  // webpack
-require('../css/index.less');
 require('../css/global.less');
 require('../css/mobile.less');
+require('../css/sandbox.less');
 
 
 export const initClient = (mountElement:HTMLElement, conf:SandboxConf) => {
@@ -45,7 +45,7 @@ export const initClient = (mountElement:HTMLElement, conf:SandboxConf) => {
         uiLang: uiLangSel,
         translations: translations,
         staticUrlCreator: (path) => conf.rootUrl + 'assets/' + path,
-        actionUrlCreator: (path, args) => conf.hostUrl +
+        actionUrlCreator: (path, args) => conf.rootUrl +
                 (path.substr(0, 1) === '/' ? path.substr(1) : path ) +
                 (Object.keys(args || {}).length > 0 ? '?' + encodeArgs(args) : '')
     });

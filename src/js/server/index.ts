@@ -43,8 +43,8 @@ const conf:SandboxConf = {
     translations: translations,
     uiLang: 'en-US',
     rootUrl: '/',
-    hostUrl: 'http://localhost:9001/'
-}; // TODO
+    clientSrcUrl: `http://${serverConf.address}:${serverConf.develServer.port}${serverConf.develServer.urlRootPath}`
+};
 
 sandboxRouter(conf)(app);
 

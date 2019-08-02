@@ -40,7 +40,7 @@ module.exports = (env) => ({
                         options: {
                             emitFile: false,
                             name: '[name].[ext]',
-                            publicPath: CONF.staticFilesUrl,
+                            publicPath: CONF.assetsUrl,
                         }
                     }
                 ]
@@ -115,7 +115,7 @@ module.exports = (env) => ({
         publicPath: (CONF.develServer || {}).urlRootPath + 'dist/',
         contentBase: path.resolve(__dirname, 'html'),
         compress: true,
-        port: (CONF.develServer || {}).port || 9000,
+        port: (CONF.develServer || {}).port,
         host: 'localhost',
         disableHostCheck: true, // TODO
         inline: true,

@@ -20,7 +20,7 @@ export interface SandboxConf {
     translations:{[loc:string]:{[key:string]:string}};
     uiLang:string;
     rootUrl:string;
-    hostUrl:string;
+    clientSrcUrl:string;
 }
 
 
@@ -31,7 +31,7 @@ export interface SandboxConf {
 export interface ServerConf {
     address:string;
     port:number;
-    staticFilesUrl:string;
+    assetsUrl:string;
     languages:{[code:string]:string};
     develServer:{
         port:number;
