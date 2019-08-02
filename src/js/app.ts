@@ -22,21 +22,21 @@ import { Observable } from 'rxjs';
 import { ScreenProps } from './common/hostPage';
 import { ActionName, Actions } from './models/actions';
 import { IActionDispatcher, ViewUtils } from 'kombo';
-import { AppServices } from './appServices';
+import { AppTools } from './appTools';
 import { GlobalComponents,  init as globalCompInit  } from './views/global';
 import { SandboxRootComponentProps, init as sandboxViewInit } from './views/sandbox';
 import { MyModel } from './models/sandbox';
 
 
 export interface InitIntArgs {
-    appServices:AppServices;
+    appTools:AppTools;
     dispatcher:IActionDispatcher;
     onResize:Observable<ScreenProps>;
     viewUtils:ViewUtils<GlobalComponents>;
 }
 
 
-export function createRootComponent({appServices, dispatcher,
+export function createRootComponent({appTools, dispatcher,
     onResize, viewUtils}:InitIntArgs):React.FunctionComponent<SandboxRootComponentProps> {
 
     const globalComponents = globalCompInit(dispatcher, viewUtils, onResize);

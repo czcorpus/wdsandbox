@@ -23,7 +23,7 @@ import { fromEvent, Observable } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 import * as translations from 'translations';
 
-import { AppServices } from './appServices';
+import { AppTools } from './appTools';
 import { encodeArgs } from './common/ajax';
 import { GlobalComponents } from './views/global';
 import { createRootComponent } from './app';
@@ -48,7 +48,7 @@ export const initClient = (mountElement:HTMLElement, conf:SandboxConf) => {
                 (path.substr(0, 1) === '/' ? path.substr(1) : path ) +
                 (Object.keys(args || {}).length > 0 ? '?' + encodeArgs(args) : '')
     });
-    const appServices = new AppServices({
+    const appTools = new AppTools({
         uiLang: conf.uiLang,
         translator: viewUtils,
         staticUrlCreator: viewUtils.createStaticUrl,
@@ -56,20 +56,20 @@ export const initClient = (mountElement:HTMLElement, conf:SandboxConf) => {
         mobileModeTest: () => window.matchMedia('screen and (max-width: 480px)').matches
                 && (('ontouchstart' in window) || window['DocumentTouch'] && document instanceof DocumentTouch)
     });
-    //appServices.forceMobileMode(); // DEBUG
+    //appTools.forceMobileMode(); // DEBUG
 
     const windowResize$:Observable<ScreenProps> = fromEvent(window, 'resize')
     .pipe(
         debounceTime(500),
         map(v => ({
-            isMobile: appServices.isMobileMode(),
+            isMobile: appTools.isMobileMode(),
             innerWidth: window.innerWidth,
             innerHeight: window.innerHeight
         }))
     );
 
     const SandboxRootComponent = createRootComponent({
-        appServices: appServices,
+        appTools: appTools,
         dispatcher: dispatcher,
         onResize: windowResize$,
         viewUtils: viewUtils
@@ -79,7 +79,7 @@ export const initClient = (mountElement:HTMLElement, conf:SandboxConf) => {
         React.createElement(
             SandboxRootComponent,
             {
-                isMobile: appServices.isMobileMode()
+                isMobile: appTools.isMobileMode()
             }
         ),
         mountElement
