@@ -1,8 +1,10 @@
 {
     "en-US": {
-        "global__sandbox_title": "Typescript + React (+ Kombo) sandbox"
+        "global__sandbox_title": "TypeScript + React + RxJS-based custom state management",
+        "global__sandbox_subtitle": "as you've seen in KonText and Word at a Glance"
     },
     "cs-CZ": {
-        "global__sandbox_title": "Typescript + React (+ Kombo) test. prostředí"
+        "global__sandbox_title": "TypeScript + React + řízení stavu založené na RxJS",
+        "global__sandbox_subtitle": "znáte z aplikací KonText a Word at a Glance"
     }
 }
