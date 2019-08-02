@@ -64,30 +64,29 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
     };
 
 
-    class Widget extends React.PureComponent<MyModelState> {
+    const Widget:React.SFC<{version:string} & MyModelState> = (props) => {
 
-        render() {
-            return (
-                <section className="widget1">
-                    <h2>WIDGET 1</h2>
-                    <p>
-                        <FooButton /> <strong>num of clicks: {this.props.numOfClicks}</strong>
-                    </p>
-                    <p>
-                        <DoubleValueButton />
-                        {this.props.isBusy ? ' working...' : null}
-                    </p>
-                    <p>
-                        {this.props.screenMode !== null ?
-                        <span>{`(last screen change: ${this.props.screenMode.width} x ${this.props.screenMode.height})`}</span> :
-                        null}
-                    </p>
-                </section>
-            );
-        }
+        return (
+            <section className="widget1">
+                <h2>WIDGET 1</h2>
+                <p>
+                    <FooButton /> <strong>num of clicks: {props.numOfClicks}</strong>
+                </p>
+                <p>
+                    <DoubleValueButton />
+                    {props.isBusy ? ' working...' : null}
+                </p>
+                <p>
+                    {props.screenMode !== null ?
+                    <span>{`(last screen change: ${props.screenMode.width} x ${props.screenMode.height})`}</span> :
+                    null}
+                </p>
+                <p>version: {props.version}</p>
+            </section>
+        );
     }
 
-    const BoundWidget = BoundWithProps<{}, MyModelState>(Widget, model);
+    const BoundWidget = BoundWithProps<{version:string}, MyModelState>(Widget, model);
 
     // --------------------------------------------------------------
     // --------------------------------------------------------------
@@ -97,7 +96,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
     const SandboxRootComponent:React.SFC<SandboxRootComponentProps> = (props) => {
         return (
             <div className="SandboxRootComponent">
-                <BoundWidget />
+                <BoundWidget version="2019-08-02" />
             </div>
         );
     }
