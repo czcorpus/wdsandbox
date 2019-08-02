@@ -174,3 +174,12 @@ export namespace Forms {
 
 }
 
+
+export function repeat<T>(fn:()=>T, size:number):Array<T> {
+    const ans = [];
+    for (let i = 0; i < size; i += 1) {
+        ans.push(fn());
+    }
+    return ans;
+}
+

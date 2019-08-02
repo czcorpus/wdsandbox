@@ -20,7 +20,7 @@ import * as React from 'react';
 import { Observable } from 'rxjs';
 
 import { ScreenProps } from '../common/hostPage';
-import { KeyCodes } from '../common/util';
+import { KeyCodes } from '../common/types';
 
 export interface SourceInfo {
     corp:string;

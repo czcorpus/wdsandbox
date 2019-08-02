@@ -21,7 +21,7 @@ import { ITranslator } from 'kombo';
 /**
  *
  */
-export interface AppServicesArgs {
+export interface AppToolsArgs {
     uiLang:string;
     translator:ITranslator;
     staticUrlCreator:(path:string)=>string;
@@ -32,7 +32,7 @@ export interface AppServicesArgs {
 /**
  *
  */
-export class AppServices {
+export class AppTools {
 
     private readonly translator:ITranslator;
 
@@ -46,7 +46,7 @@ export class AppServices {
 
     private readonly mobileModeTest:()=>boolean;
 
-    constructor({uiLang, translator, staticUrlCreator, actionUrlCreator, mobileModeTest}:AppServicesArgs) {
+    constructor({uiLang, translator, staticUrlCreator, actionUrlCreator, mobileModeTest}:AppToolsArgs) {
         this.uiLang = uiLang;
         this.translator = translator;
         this.staticUrlCreator = staticUrlCreator;

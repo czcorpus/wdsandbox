@@ -22,7 +22,7 @@ import { renderToString } from 'react-dom/server';
 import * as Immutable from 'immutable';
 import * as cors from 'cors';
 
-import { AppServices } from '../appServices';
+import { AppTools } from '../appTools';
 import { encodeArgs } from '../common/ajax';
 import { AvailableLanguage } from '../common/hostPage';
 import { SandboxConf} from '../conf';
@@ -30,7 +30,11 @@ import { GlobalComponents } from '../views/global';
 import { init as layoutViewInit, LayoutProps } from '../views/layout';
 import { SandboxRootComponentProps } from '../views/sandbox';
 import { ServerSideActionDispatcher } from './core';
-import { HTTPAction } from './actions';
+
+
+enum HTTPAction {
+    MAIN = '/'
+}
 
 
 interface RenderResultArgs {
@@ -58,19 +62,19 @@ function renderResult({layoutView, sandboxConf, returnUrl, rootView, isMobile}:R
     return `<!DOCTYPE html>\n${appString}`;
 }
 
-function createHelperServices(conf:SandboxConf):[ViewUtils<GlobalComponents>, AppServices] {
+function createHelperServices(conf:SandboxConf):[ViewUtils<GlobalComponents>, AppTools] {
     const viewUtils = new ViewUtils<GlobalComponents>({
         uiLang: conf.uiLang,
         translations: conf.translations,
         staticUrlCreator: (path) => conf.rootUrl + 'assets/' + path,
-        actionUrlCreator: (path, args) => conf.hostUrl +
+        actionUrlCreator: (path, args) => conf.rootUrl +
                 (path.substr(0, 1) === '/' ? path.substr(1) : path ) +
                 (Object.keys(args || {}).length > 0 ? '?' + encodeArgs(args) : '')
     });
 
     return [
         viewUtils,
-        new AppServices({
+        new AppTools({
             uiLang: conf.uiLang,
             translator: viewUtils,
             staticUrlCreator: viewUtils.createStaticUrl,
@@ -104,13 +108,13 @@ export const sandboxRouter = (conf:SandboxConf) => (app:Express) => {
 
     app.get(HTTPAction.MAIN, (req, res, next) => {
         const dispatcher = new ServerSideActionDispatcher();
-        const [viewUtils, appServices] = createHelperServices(conf);
+        const [viewUtils, appTools] = createHelperServices(conf);
 
         res.send(renderResult({
             sandboxConf: conf,
             layoutView: layoutViewInit(viewUtils),
             returnUrl: mkReturnUrl(req, conf.rootUrl),
-            rootView: null, //sandboxViewInit(dispatcher, viewUtils, null),
+            rootView: null, //sandboxViewInit(dispatcher, viewUtils, null), // TODO server rendering
             isMobile: false, // TODO should we detect the mode on server too
         }));
     });

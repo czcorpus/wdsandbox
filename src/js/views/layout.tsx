@@ -51,20 +51,22 @@ export function init(ut:ViewUtils<GlobalComponents>):React.SFC<LayoutProps> {
                     <meta charSet="utf-8" />
                     <meta name="viewport" content="width=device-width, initial-scale=1" />
                     <title>{ut.translate('global__sandbox_title')}</title>
-                    <link href={`${urlResolve(props.sandboxConf.hostUrl, 'dist/common.css')}`} rel="stylesheet" type="text/css" />
+                    <link href={`${urlResolve(props.sandboxConf.clientSrcUrl, 'dist/common.css')}`} rel="stylesheet" type="text/css" />
                 </head>
                 <body>
                     <header className="sandbox-header">
-                        <a href={props.sandboxConf.hostUrl} title={ut.translate('global__sandbox_title')}>
-                            TypeScript + React Sandbox
-                        </a>
+                        <h1>
+                            <a href={props.sandboxConf.rootUrl} title={ut.translate('global__sandbox_title')}>
+                                TypeScript + React + RxJS-based custom stage management sandbox
+                            </a>
+                        </h1>
                     </header>
                     <section className="sandbox-mount">
                         {props.RootComponent ?
                             <props.RootComponent isMobile={props.isMobile} /> : null}
                     </section>
-                    <script type="text/javascript" src={`${urlResolve(props.sandboxConf.hostUrl, 'dist/common.js')}`}></script>
-                    <script type="text/javascript" src={`${urlResolve(props.sandboxConf.hostUrl, 'dist/index.js')}`}></script>
+                    <script type="text/javascript" src={`${urlResolve(props.sandboxConf.clientSrcUrl, 'dist/common.js')}`}></script>
+                    <script type="text/javascript" src={`${urlResolve(props.sandboxConf.clientSrcUrl, 'dist/index.js')}`}></script>
                     <script type="text/javascript" dangerouslySetInnerHTML={{__html: createScriptStr()}} />
                 </body>
             </html>

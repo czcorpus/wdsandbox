@@ -23,18 +23,19 @@ import { fromEvent, Observable } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 import * as translations from 'translations';
 
-import { AppServices } from './appServices';
+import { AppTools } from './appTools';
 import { encodeArgs } from './common/ajax';
 import { GlobalComponents } from './views/global';
-import { createRootComponent } from './app';
+import { createRootComponent } from './sandbox';
 import { ScreenProps } from './common/hostPage';
 import { SandboxConf } from './conf';
+import { CoreActions, CoreActionName } from './models/actions';
 
 declare var DocumentTouch;
 declare var require:(src:string)=>void;  // webpack
-require('../css/index.less');
 require('../css/global.less');
 require('../css/mobile.less');
+require('../css/sandbox.less');
 
 
 export const initClient = (mountElement:HTMLElement, conf:SandboxConf) => {
@@ -44,11 +45,11 @@ export const initClient = (mountElement:HTMLElement, conf:SandboxConf) => {
         uiLang: uiLangSel,
         translations: translations,
         staticUrlCreator: (path) => conf.rootUrl + 'assets/' + path,
-        actionUrlCreator: (path, args) => conf.hostUrl +
+        actionUrlCreator: (path, args) => conf.rootUrl +
                 (path.substr(0, 1) === '/' ? path.substr(1) : path ) +
                 (Object.keys(args || {}).length > 0 ? '?' + encodeArgs(args) : '')
     });
-    const appServices = new AppServices({
+    const appTools = new AppTools({
         uiLang: conf.uiLang,
         translator: viewUtils,
         staticUrlCreator: viewUtils.createStaticUrl,
@@ -56,30 +57,40 @@ export const initClient = (mountElement:HTMLElement, conf:SandboxConf) => {
         mobileModeTest: () => window.matchMedia('screen and (max-width: 480px)').matches
                 && (('ontouchstart' in window) || window['DocumentTouch'] && document instanceof DocumentTouch)
     });
-    //appServices.forceMobileMode(); // DEBUG
+    //appTools.forceMobileMode(); // DEBUG
 
     const windowResize$:Observable<ScreenProps> = fromEvent(window, 'resize')
     .pipe(
         debounceTime(500),
         map(v => ({
-            isMobile: appServices.isMobileMode(),
+            isMobile: appTools.isMobileMode(),
             innerWidth: window.innerWidth,
             innerHeight: window.innerHeight
         }))
+
     );
 
     const SandboxRootComponent = createRootComponent({
-        appServices: appServices,
+        appTools: appTools,
         dispatcher: dispatcher,
         onResize: windowResize$,
         viewUtils: viewUtils
     });
 
+    windowResize$.subscribe(
+        (props) => {
+            dispatcher.dispatch<CoreActions.SetScreenMode>({
+                name: CoreActionName.SetScreenMode,
+                payload: props
+            });
+        }
+    );
+
     ReactDOM.render(
         React.createElement(
             SandboxRootComponent,
             {
-                isMobile: appServices.isMobileMode()
+                isMobile: appTools.isMobileMode()
             }
         ),
         mountElement

@@ -1,7 +1,7 @@
 {
     "address": "localhost",
     "port": 3000,
-    "staticFilesUrl": "/assets/",
+    "assetsUrl": "/assets/",
     "theme": "default.less",
     "languages": {
         "en-US": "Angličtina",

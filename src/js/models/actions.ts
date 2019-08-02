@@ -17,17 +17,15 @@
  */
 import { Action } from 'kombo';
 
+// ----------------------------------------------------------
+// ------------- CORE ACTIONS (do not change) ---------------
+// ----------------------------------------------------------
 
-export enum ActionName {
-    SetScreenMode = 'MAIN_SET_SCREEN_MODE',
-    // here the sandbox stuff begins...
-    ClickFooButton = 'MAIN_CLICK_FOO_BUTTON',
-    ClickDoubleValueButton = 'MAIN_CLICK_FOO2_BUTTON',
-    DoubleOperationDone = 'MAIN_DOUBLE_OPERATION_DONE'
-
+export enum CoreActionName {
+    SetScreenMode = 'MAIN_SET_SCREEN_MODE'
 }
 
-export namespace Actions {
+export namespace CoreActions {
 
     export interface SetScreenMode extends Action<{
         isMobile:boolean;
@@ -35,10 +33,24 @@ export namespace Actions {
         innerHeight:number;
 
     }> {
-        name: ActionName.SetScreenMode;
+        name: CoreActionName.SetScreenMode;
     }
+}
 
-    // --------------- sandbox actions
+
+// ------------------------------------------------------------
+// ---------------- SANDBOX ACTIONS (modify as you like) ------
+// ------------------------------------------------------------
+
+
+export enum ActionName {
+    ClickFooButton = 'SANDBOX_CLICK_FOO_BUTTON',
+    ClickDoubleValueButton = 'SANDBOX_CLICK_FOO2_BUTTON',
+    DoubleOperationDone = 'SANDBOX_DOUBLE_OPERATION_DONE'
+}
+
+
+export namespace Actions {
 
     export interface ClickFooButton extends Action<{
     }> {
