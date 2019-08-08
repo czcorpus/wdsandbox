@@ -3,6 +3,7 @@ import { IActionDispatcher, ViewUtils, BoundWithProps } from 'kombo';
 import { GlobalComponents } from './global';
 import { UDTagBuilderModel, UDTagBuilderModelState } from '../models/tagbuilder';
 import { KeyCodes } from '../common/types';
+import { init as featureSelectInit } from './featureselect';
 
 export interface ViewProps {
     sourceId:string;
@@ -15,6 +16,7 @@ export interface ViewProps {
 
 export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents>, model:UDTagBuilderModel):React.ComponentClass<{}> {
 
+    const FeatureSelect = featureSelectInit(dispatcher, ut);
 
     // ------------------------------ <TagDisplay /> ----------------------------
 
@@ -160,12 +162,6 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
 
     class UDTagBuilderWidget extends React.PureComponent<ViewProps & UDTagBuilderModelState> {
 
-        componentDidMount() {
-            dispatcher.dispatch({
-                name: 'TAGHELPER_GET_INITIAL_DATA'
-            })
-        }
-
         render() {
             return (
                 <div className="tag-builder-widget">
@@ -178,7 +174,14 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
                                 actionPrefix={this.props.actionPrefix} />
                     </div>
                     <div>
-                        UD props and values selection
+                        <FeatureSelect
+                            error={this.props.error}
+                            isLoaded={this.props.isLoaded}
+                            allFeatures={this.props.allFeatures}
+                            availableFeatures={this.props.availableFeatures}
+                            filterFeatures={this.props.filterFeatures}
+                            showCategories={this.props.showCategories}
+                        />
                     </div>
                 </div>
             );

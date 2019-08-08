@@ -49,7 +49,14 @@ export function createRootComponent({dispatcher, onResize, viewUtils}:InitIntArg
         {
             insertRange: [0, 0],
             canUndo: false,
-            displayPattern: ''
+            displayPattern: '',
+            error: null,
+            isLoaded: false,
+            allFeatures: {},
+            availableFeatures: {},
+            filterFeatures: [],
+            showCategories: true,
+            requestUrl: "http://localhost:8080/",
         }
     );
     return sandboxViewInit(dispatcher, viewUtils, tagBuilderModel);

@@ -17,14 +17,24 @@ export interface UDTagBuilderModelState {
 
 
     // ...
+    error: Error|null;
+    isLoaded: boolean;
+    allFeatures: {},
+    availableFeatures: {},
+    filterFeatures: Array<string>;
+    showCategories: boolean;
+    requestUrl: string;
 }
 
+export function composeFilter(name:string, value:string):string {
+    return name + "=" + value;
+}
 
 export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
 
     constructor(dispatcher:IActionDispatcher, initialState:UDTagBuilderModelState) {
         super(dispatcher, initialState);
-
+        this.DEBUG_onActionMatch((state, action, _) => {console.log(action)});
         this.actionMatch = {
             'TAGHELPER_PRESET_PATTERN': (state, action) => {
                 const newState = this.copyState(state);
@@ -35,24 +45,51 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
             'TAGHELPER_GET_INITIAL_DATA': (state, action) => {
                 const newState = this.copyState(state);
                 // TODO
-                console.log('get initial data');
                 return newState;
             },
-            'TAGHELPER_GET_INITIAL_DATA_DONE': (state, action) => {
+            'TAGHELPER_GET_INITIAL_FEATURES_DONE': (state, action) => {
                 const newState = this.copyState(state);
-                action.payload['data']
-                // TODO
+                newState.isLoaded = true;
+                if (!action.error) {
+                    newState.allFeatures = action.payload['result'];
+                    newState.availableFeatures = action.payload['result'];
+                } else {
+                    newState.error = action.error;                    
+                }
                 return newState;
             },
-            // 'TAGHELPER_CHECKBOX_CHANGED': probably not applicable
-            'TAGHELPER_ATTR_VALUE_SELECTED': (state, action) => { // <-- just a suggestion
+            'TAGHELPER_ADD_FILTER': (state, action) => {
                 const newState = this.copyState(state);
-                // TODO
+                const filter = composeFilter(action.payload['name'], action.payload['value']);
+                if (!newState.filterFeatures.includes(filter)) {
+                    newState.filterFeatures = [...newState.filterFeatures, filter];
+                }
+                dispatcher.dispatch({
+                    name: 'TAGHELPER_GET_FILTERED_FEATURES',
+                    payload: {filter: newState.filterFeatures}
+                });
+                return newState;
+            },
+            'TAGHELPER_REMOVE_FILTER': (state, action) => {
+                const newState = this.copyState(state);
+                const filter = composeFilter(action.payload['name'], action.payload['value']);
+                if (newState.filterFeatures.includes(filter)) {
+                    newState.filterFeatures = newState.filterFeatures.filter((value, index, arr) => (value !== filter))
+                }
+                dispatcher.dispatch({
+                    name: 'TAGHELPER_GET_FILTERED_FEATURES',
+                    payload: {filter: newState.filterFeatures}
+                });
                 return newState;
             },
             'TAGHELPER_LOAD_FILTERED_DATA_DONE': (state, action) => {
                 const newState = this.copyState(state);
-                // TODO
+                newState.isLoaded = true;
+                if (!action.error) {
+                    newState.availableFeatures = action.payload['result'];
+                } else {
+                    newState.error = action.error;                    
+                }
                 return newState;
             },
             'TAGHELPER_UNDO': (state, action) => {
@@ -70,29 +107,51 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
 
     sideEffects(state:UDTagBuilderModelState, action:Action, dispatch:SEDispatcher) {
         switch (action.name) {
-            case 'TAGHELPER_GET_INITIAL_DATA':
-                ajax$(
-                    HTTPMethod.GET,
-                    '/ajax_get_tag_variants',
-                    {}
-
-                ).subscribe(
-                    (data) => {
+            case 'TAGHELPER_GET_INITIAL_FEATURES':
+                fetch(state.requestUrl).then(res => res.json()).then(
+                    (result) => {
                         dispatch({
-                            name: 'TAGHELPER_GET_INITIAL_DATA_DONE',
-                            data: data
-                        })
+                            name: 'TAGHELPER_GET_INITIAL_FEATURES_DONE',
+                            payload: {result: result}
+                        });
                     },
-                    (err) => {
+                    (error) => {
                         dispatch({
-                            name: 'TAGHELPER_GET_INITIAL_DATA_DONE',
-                            error: err
-                        })
+                            name: 'TAGHELPER_GET_INITIAL_FEATURES_DONE',
+                            error: error
+                        });
                     }
                 )
             break;
-            case 'TAGHELPER_ATTR_VALUE_SELECTED':
 
+            case 'TAGHELPER_GET_FILTERED_FEATURES':
+                let query = ''
+                for (let feature of action.payload['filter']) {
+                    if (query) {
+                        query += "&" + feature;
+                    } else {
+                        query = "?" + feature;
+                    }
+                }
+                console.log('Sending request...', action.payload['filter'])
+                fetch(state.requestUrl + query).then(res => res.json())
+                .then(
+                    (result) => {
+                        dispatch({
+                            name: 'TAGHELPER_LOAD_FILTERED_DATA_DONE',
+                            payload: {result: result}
+                        });
+                    },
+                    (error) => {
+                        dispatch({
+                            name: 'TAGHELPER_LOAD_FILTERED_DATA_DONE',
+                            error: error
+                        });
+                    }
+                )
+            break;
+
+            case 'TAGHELPER_ATTR_VALUE_SELECTED':
             break;
         }
     }
