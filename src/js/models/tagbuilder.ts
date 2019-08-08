@@ -42,9 +42,9 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                 return newState;
 
             },
-            'TAGHELPER_GET_INITIAL_DATA': (state, action) => {
+            'TAGHELPER_ON_SELECT_CATEGORY': (state, action) => {
                 const newState = this.copyState(state);
-                // TODO
+                newState.showCategory = action.payload['name'];
                 return newState;
             },
             'TAGHELPER_GET_INITIAL_FEATURES_DONE': (state, action) => {

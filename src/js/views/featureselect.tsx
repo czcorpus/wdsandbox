@@ -9,7 +9,7 @@ export interface FeatureSelectProps {
   allFeatures:{};
   availableFeatures:{};
   filterFeatures:Array<string>;
-  showCategory:string; // TODO, toggle categories
+  showCategory:string;
 }
 
 export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents>):React.ComponentClass<FeatureSelectProps> {
@@ -33,22 +33,13 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
             />{value}</label>
         );
         return(
-            <div>
-                <button>
-                    {this.props.categoryName + " (" + this.props.availableValues.length + ")"}
-                </button>
-                {checkboxes}
-            </div>
+            <div>{checkboxes}</div>
         );
     }
   }
 
   class FeatureSelect extends React.Component<FeatureSelectProps>{
-    constructor(props) {
-      super(props);
-      this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
-    }
-
+    
     handleCheckboxChange(event) {
       if (event.target.checked) {
           dispatcher.dispatch({
@@ -61,6 +52,13 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
             payload: {name: event.target.name, value: event.target.value}
           });
       }
+    }
+
+    handleCategorySelect(event) {
+      dispatcher.dispatch({
+        name: 'TAGHELPER_ON_SELECT_CATEGORY',
+        payload: {name: event.target.name}
+      });
     }
 
     componentDidMount() {
@@ -77,16 +75,23 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
       } else {
         let categories = []
         for (let category of Object.keys(this.props.allFeatures).sort()) {
-            categories.push(<Category
-              key={category}
-              onChangeHandler={this.handleCheckboxChange}
-              filterFeatures={this.props.filterFeatures}
-              categoryName={category}
-              allValues={this.props.allFeatures[category]}
-              availableValues={category in this.props.availableFeatures ? this.props.availableFeatures[category] : []}
-            />)
+          const availableValuesCount = (category in this.props.availableFeatures ? this.props.availableFeatures[category].length : 0)
+          categories.push(
+            <button key={category} name={category} onClick={this.handleCategorySelect}>
+              {category + " (" + availableValuesCount + ")"}
+            </button>)
         }
-        return <div>{categories}</div>;
+        return(<div>
+          <div>{categories}</div>
+          <div><Category
+            onChangeHandler={this.handleCheckboxChange}
+            filterFeatures={this.props.filterFeatures}
+            categoryName={this.props.showCategory}
+            allValues={this.props.allFeatures[this.props.showCategory]}
+            availableValues={this.props.showCategory in this.props.availableFeatures ? this.props.availableFeatures[this.props.showCategory] : []}
+          /></div>
+          </div>
+        );
       }
     }
   }
