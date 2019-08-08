@@ -30,12 +30,10 @@ import { GlobalComponents } from '../views/global';
 import { init as layoutViewInit, LayoutProps } from '../views/layout';
 import { SandboxRootComponentProps } from '../views/sandbox';
 import { ServerSideActionDispatcher } from './core';
-import { Observable } from 'rxjs';
 
 
 enum HTTPAction {
-    MAIN = '/',
-    GET_TAG_VARIANTS = '/ajax_get_tag_variants'
+    MAIN = '/'
 }
 
 
@@ -104,9 +102,6 @@ function getLangFromCookie(req:Request, cookieName:string, languages:{[code:stri
 }
 
 
-
-
-
 export const sandboxRouter = (conf:SandboxConf) => (app:Express) => {
 
     app.options(HTTPAction.MAIN, cors());
@@ -123,29 +118,6 @@ export const sandboxRouter = (conf:SandboxConf) => (app:Express) => {
             isMobile: false, // TODO should we detect the mode on server too
         }));
     });
-
-    app.get(HTTPAction.GET_TAG_VARIANTS, (req, res, next) => {
-        new Observable<any>(observer => {
-            if (req.query.pattern) { // user selection
-                observer.next({data: 'xxxxx'});
-                observer.complete();
-
-            } else { // initial set of values
-                observer.next({data: 'initial xxxxx'});
-                observer.complete();
-            }
-        }).subscribe(
-            (data) => {
-                res.setHeader('Content-Type', 'application/json');
-                res.send(JSON.stringify({result: data}));
-            },
-            (err:Error) => {
-                res.status(500).send({
-                    message: err.message
-                });
-            }
-        );
-    })
 
     /*
     app.post(HTTPAction.SET_UI_LANG, (req, res, next) => {

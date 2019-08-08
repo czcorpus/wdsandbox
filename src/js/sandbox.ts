@@ -24,7 +24,7 @@ import { IActionDispatcher, ViewUtils } from 'kombo';
 import { AppTools } from './appTools';
 import { GlobalComponents,  init as globalCompInit  } from './views/global';
 import { SandboxRootComponentProps, init as sandboxViewInit } from './views/sandbox';
-import { UDTagBuilderModel } from './models/tagbuilder';
+import { MyModel } from './models/sandbox';
 
 
 export interface InitIntArgs {
@@ -44,13 +44,13 @@ export function createRootComponent({dispatcher, onResize, viewUtils}:InitIntArg
     // ------- HERE SANDBOX BEGINS -----------------------------
     // ---------------------------------------------------------
 
-    const tagBuilderModel = new UDTagBuilderModel(
+    const myModel = new MyModel(
         dispatcher,
         {
-            insertRange: [0, 0],
-            canUndo: false,
-            displayPattern: ''
+            numOfClicks: 0,
+            isBusy: false,
+            screenMode:null
         }
     );
-    return sandboxViewInit(dispatcher, viewUtils, tagBuilderModel);
+    return sandboxViewInit(dispatcher, viewUtils, myModel);
 }
