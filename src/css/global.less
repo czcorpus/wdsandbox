@@ -1,5 +1,40 @@
+@import './shared.less';
+
 body {
     max-width: 80em;
+}
+
+a.util-button,
+button.util-button {
+    .util-button();
+}
+
+
+a.util-button.active,
+button.util-button.active {
+    background-color: @color-light-pink;
+    color: rgb(39, 35, 36);
+}
+
+a.util-button.active:hover,
+button.util-button.active:hover {
+    background-color: #FFF0E8;
+    color: rgb(39, 35, 36);
+}
+
+.util-button.cancel.disabled,
+.util-button.disabled {
+    .disabled-util-button();
+}
+
+a.util-button.cancel,
+button.util-button.cancel {
+    color: @color-logo-pink;
+}
+
+a.util-button:hover,
+button.util-button:hover {
+    background-color: @color-light-green;
 }
 
 header.sandbox-header {

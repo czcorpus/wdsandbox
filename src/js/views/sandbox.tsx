@@ -16,12 +16,11 @@
  * limitations under the License.
  */
 
-import { BoundWithProps, IActionDispatcher, ViewUtils } from 'kombo';
+import { IActionDispatcher, ViewUtils } from 'kombo';
 import * as React from 'react';
-
-import { ActionName, Actions } from '../models/actions';
 import { GlobalComponents } from './global';
-import { MyModel, MyModelState } from '../models/sandbox';
+import { UDTagBuilderModel } from '../models/tagbuilder';
+import { init as tagbuilderViewInit } from '../views/tagbuilder';
 
 
 export interface SandboxRootComponentProps {
@@ -29,74 +28,19 @@ export interface SandboxRootComponentProps {
 }
 
 
-export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents>, model:MyModel) {
+export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents>, model:UDTagBuilderModel) {
 
     const globalComponents = ut.getComponents();
-
-    // ------------------------------------------------------------
-    // my components here
-    // ------------------------------------------------------------
-
-    const FooButton:React.SFC<{}> = (props) => {
-
-        const handleClick = () => {
-            dispatcher.dispatch<Actions.ClickFooButton>({
-                name: ActionName.ClickFooButton,
-                payload: {}
-            });
-        };
-
-        return <button type="button" onClick={handleClick}>Increase</button>
-    };
-
-    // ---
-
-    const DoubleValueButton:React.SFC<{}> = (props) => {
-
-        const handleClick = () => {
-            dispatcher.dispatch<Actions.ClickDoubleValueButton>({
-                name: ActionName.ClickDoubleValueButton,
-                payload: {}
-            });
-        };
-
-        return <button type="button" onClick={handleClick}>Double (async)</button>
-    };
-
-
-    const Widget:React.SFC<{version:string} & MyModelState> = (props) => {
-
-        return (
-            <section className="widget1">
-                <h2>WIDGET 1</h2>
-                <p>
-                    <FooButton /> <strong>num of clicks: {props.numOfClicks}</strong>
-                </p>
-                <p>
-                    <DoubleValueButton />
-                    {props.isBusy ? ' working...' : null}
-                </p>
-                <p>
-                    {props.screenMode !== null ?
-                    <span>{`(last screen change: ${props.screenMode.width} x ${props.screenMode.height})`}</span> :
-                    null}
-                </p>
-                <p>version: {props.version}</p>
-            </section>
-        );
-    }
-
-    const BoundWidget = BoundWithProps<{version:string}, MyModelState>(Widget, model);
-
     // --------------------------------------------------------------
     // --------------------------------------------------------------
     // --------------------------------------------------------------
+    const TagBuilderComponent = tagbuilderViewInit(dispatcher, ut, model);
 
 
     const SandboxRootComponent:React.SFC<SandboxRootComponentProps> = (props) => {
         return (
             <div className="SandboxRootComponent">
-                <BoundWidget version="2019-08-02" />
+                <TagBuilderComponent />
             </div>
         );
     }
