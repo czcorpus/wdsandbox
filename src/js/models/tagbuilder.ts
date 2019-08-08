@@ -22,7 +22,7 @@ export interface UDTagBuilderModelState {
     allFeatures: {},
     availableFeatures: {},
     filterFeatures: Array<string>;
-    showCategories: boolean;
+    showCategory: string;
     requestUrl: string;
 }
 

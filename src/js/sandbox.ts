@@ -55,7 +55,7 @@ export function createRootComponent({dispatcher, onResize, viewUtils}:InitIntArg
             allFeatures: {},
             availableFeatures: {},
             filterFeatures: [],
-            showCategories: true,
+            showCategory: 'POS',
             requestUrl: "http://localhost:8080/",
         }
     );

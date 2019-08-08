@@ -9,47 +9,43 @@ export interface FeatureSelectProps {
   allFeatures:{};
   availableFeatures:{};
   filterFeatures:Array<string>;
-  showCategories:boolean; // TODO, toggle categories
+  showCategory:string; // TODO, toggle categories
 }
 
 export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents>):React.ComponentClass<FeatureSelectProps> {
+  
   class Category extends React.Component<{
     allValues:Array<string>;
     availableValues:Array<string>;
     onChangeHandler:(event) => void;
     categoryName:string;
     filterFeatures:Array<string>;
-    showCategories:boolean;
   }> {
-      constructor(props) {
-          super(props);
-      }
 
-      render() {
-          let checkboxes = this.props.allValues.map(
-              value => <label key={value} style={this.props.availableValues.includes(value) ? {fontWeight: 'bold'} : {fontWeight: 'normal'}}><input
-                onChange={this.props.onChangeHandler}
-                type='checkbox'
-                name={this.props.categoryName}
-                value={value}
-                checked={this.props.filterFeatures.includes(composeFilter(this.props.categoryName, value)) ? true : false}
-              />{value}</label>
-          );
-          return(
-              <div>
-                  <button onClick={() => this.setState({showCategories: !this.props.showCategories})}>
-                      {this.props.categoryName + " (" + this.props.availableValues.length + ")"}
-                  </button>
-                  {this.props.showCategories ? checkboxes : ''}
-              </div>
-          );
-      }
+    render() {
+        let checkboxes = this.props.allValues.sort().map(
+            value => <label key={value} style={this.props.availableValues.includes(value) ? {fontWeight: 'bold'} : {fontWeight: 'normal'}}><input
+              onChange={this.props.onChangeHandler}
+              type='checkbox'
+              name={this.props.categoryName}
+              value={value}
+              checked={this.props.filterFeatures.includes(composeFilter(this.props.categoryName, value)) ? true : false}
+            />{value}</label>
+        );
+        return(
+            <div>
+                <button>
+                    {this.props.categoryName + " (" + this.props.availableValues.length + ")"}
+                </button>
+                {checkboxes}
+            </div>
+        );
+    }
   }
 
   class FeatureSelect extends React.Component<FeatureSelectProps>{
     constructor(props) {
       super(props);
-
       this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
     }
 
@@ -80,7 +76,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
         return <div>Loading...</div>;
       } else {
         let categories = []
-        for (let category in this.props.allFeatures) {
+        for (let category of Object.keys(this.props.allFeatures).sort()) {
             categories.push(<Category
               key={category}
               onChangeHandler={this.handleCheckboxChange}
@@ -88,7 +84,6 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
               categoryName={category}
               allValues={this.props.allFeatures[category]}
               availableValues={category in this.props.availableFeatures ? this.props.availableFeatures[category] : []}
-              showCategories={this.props.showCategories}
             />)
         }
         return <div>{categories}</div>;
