@@ -124,20 +124,18 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
             filterFeatures={this.props.filterFeatures}
             handleRemoveFilter={this.handleRemoveFilter}
           />
-          <div>
-            <CategorySelect
-              allFeatures={this.props.allFeatures}
-              availableFeatures={this.props.availableFeatures}
-              onSelectCategoryHandler={this.handleCategorySelect}
-            />
-            <div><CategoryDetail
-              onChangeHandler={(event) => this.handleCheckboxChange(event)}
-              filterFeatures={this.props.filterFeatures}
-              categoryName={this.props.showCategory}
-              allValues={this.props.allFeatures[this.props.showCategory]}
-              availableValues={this.props.showCategory in this.props.availableFeatures ? this.props.availableFeatures[this.props.showCategory] : []}
-            /></div>
-          </div>
+          <CategorySelect
+            allFeatures={this.props.allFeatures}
+            availableFeatures={this.props.availableFeatures}
+            onSelectCategoryHandler={this.handleCategorySelect}
+          />
+          <CategoryDetail
+            onChangeHandler={(event) => this.handleCheckboxChange(event)}
+            filterFeatures={this.props.filterFeatures}
+            categoryName={this.props.showCategory}
+            allValues={this.props.allFeatures[this.props.showCategory]}
+            availableValues={this.props.showCategory in this.props.availableFeatures ? this.props.availableFeatures[this.props.showCategory] : []}
+          />
         </div>
         );
       }
