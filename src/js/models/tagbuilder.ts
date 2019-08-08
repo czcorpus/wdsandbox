@@ -21,7 +21,7 @@ export interface UDTagBuilderModelState {
     isLoaded: boolean;
     allFeatures: {},
     availableFeatures: {},
-    filterFeatures: Array<string>;
+    filterFeaturesHistory: Array<Array<string>>;
     showCategory: string;
     requestUrl: string;
 }
@@ -61,25 +61,33 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
             'TAGHELPER_ADD_FILTER': (state, action) => {
                 const newState = this.copyState(state);
                 const filter = composeFilter(action.payload['name'], action.payload['value']);
-                if (!newState.filterFeatures.includes(filter)) {
-                    newState.filterFeatures = [...newState.filterFeatures, filter];
+                const filterFeatures = newState.filterFeaturesHistory[newState.filterFeaturesHistory.length - 1];
+                if (!filterFeatures.includes(filter)) {
+                    const newFilterFeatures = [...filterFeatures, filter];
+                    newState.filterFeaturesHistory.push(newFilterFeatures);
+                    newState.canUndo = true;
+                    
+                    dispatcher.dispatch({
+                        name: 'TAGHELPER_GET_FILTERED_FEATURES',
+                        payload: {filter: newFilterFeatures}
+                    });
                 }
-                dispatcher.dispatch({
-                    name: 'TAGHELPER_GET_FILTERED_FEATURES',
-                    payload: {filter: newState.filterFeatures}
-                });
                 return newState;
             },
             'TAGHELPER_REMOVE_FILTER': (state, action) => {
                 const newState = this.copyState(state);
                 const filter = composeFilter(action.payload['name'], action.payload['value']);
-                if (newState.filterFeatures.includes(filter)) {
-                    newState.filterFeatures = newState.filterFeatures.filter((value, index, arr) => (value !== filter))
+                const filterFeatures = newState.filterFeaturesHistory[newState.filterFeaturesHistory.length - 1];
+                if (filterFeatures.includes(filter)) {
+                    const newFilterFeatures = filterFeatures.filter((value, index, arr) => (value !== filter));
+                    newState.filterFeaturesHistory.push(newFilterFeatures)
+                    newState.canUndo = true;
+
+                    dispatcher.dispatch({
+                        name: 'TAGHELPER_GET_FILTERED_FEATURES',
+                        payload: {filter: newFilterFeatures}
+                    });
                 }
-                dispatcher.dispatch({
-                    name: 'TAGHELPER_GET_FILTERED_FEATURES',
-                    payload: {filter: newState.filterFeatures}
-                });
                 return newState;
             },
             'TAGHELPER_LOAD_FILTERED_DATA_DONE': (state, action) => {
@@ -94,12 +102,22 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
             },
             'TAGHELPER_UNDO': (state, action) => {
                 const newState = this.copyState(state);
-                // TODO
+                newState.filterFeaturesHistory.pop();
+                if (newState.filterFeaturesHistory.length===1) {
+                    newState.canUndo = false;
+                }
+                
+                dispatcher.dispatch({
+                    name: 'TAGHELPER_GET_FILTERED_FEATURES',
+                    payload: {filter: newState.filterFeaturesHistory[newState.filterFeaturesHistory.length-1]}
+                });
                 return newState;
             },
             'TAGHELPER_RESET': (state, action) => {
                 const newState = this.copyState(state);
-                // TODO
+                newState.filterFeaturesHistory = [[]];
+                newState.availableFeatures = newState.allFeatures;
+                newState.canUndo = false;
                 return newState;
             }
         };
