@@ -14,7 +14,7 @@ export interface FeatureSelectProps {
 
 export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents>):React.ComponentClass<FeatureSelectProps> {
   
-  class Category extends React.Component<{
+  class CategoryDetail extends React.Component<{
     allValues:Array<string>;
     availableValues:Array<string>;
     onChangeHandler:(event) => void;
@@ -38,6 +38,47 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
     }
   }
 
+  class CategorySelect extends React.Component<{
+    allFeatures:{};
+    availableFeatures:{};
+    onSelectCategoryHandler:(event) => void;
+  }> {
+
+    render() {
+      let categories = []
+      for (let category of Object.keys(this.props.allFeatures).sort()) {
+        const availableValuesCount = (category in this.props.availableFeatures ? this.props.availableFeatures[category].length : 0);
+        categories.push(
+          <button key={category} name={category} onClick={this.props.onSelectCategoryHandler}>
+            {category + " (" + availableValuesCount + ")"}
+          </button>
+        );
+      }
+      return(
+          <div>{categories}</div>
+      );
+    }
+  }
+
+  class QueryLine extends React.Component<{
+    filterFeatures:Array<string>;
+    handleRemoveFilter:(event) => void;
+  }> {
+
+    render() {
+      let selected = []
+      for (let filter of this.props.filterFeatures) {
+        let [name, value] = filter.split("=");
+        selected.push(
+          <button key={filter} name={name} value={value} onClick={this.props.handleRemoveFilter}>
+            {filter}
+          </button>
+        );
+      }
+      return <div><p>Remove filter: {selected}</p></div>;
+    }
+  }
+
   class FeatureSelect extends React.Component<FeatureSelectProps>{
     
     handleCheckboxChange(event) {
@@ -47,12 +88,16 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
             payload: {name: event.target.name, value: event.target.value}
           });
       } else {
-          dispatcher.dispatch({
-            name: 'TAGHELPER_REMOVE_FILTER',
-            payload: {name: event.target.name, value: event.target.value}
-          });
+          this.handleRemoveFilter(event);
       }
     }
+
+    handleRemoveFilter(event) {
+      dispatcher.dispatch({
+        name: 'TAGHELPER_REMOVE_FILTER',
+        payload: {name: event.target.name, value: event.target.value}
+      });
+    };
 
     handleCategorySelect(event) {
       dispatcher.dispatch({
@@ -73,24 +118,27 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
       } else if (!this.props.isLoaded) {
         return <div>Loading...</div>;
       } else {
-        let categories = []
-        for (let category of Object.keys(this.props.allFeatures).sort()) {
-          const availableValuesCount = (category in this.props.availableFeatures ? this.props.availableFeatures[category].length : 0)
-          categories.push(
-            <button key={category} name={category} onClick={this.handleCategorySelect}>
-              {category + " (" + availableValuesCount + ")"}
-            </button>)
-        }
-        return(<div>
-          <div>{categories}</div>
-          <div><Category
-            onChangeHandler={this.handleCheckboxChange}
+        return(
+        <div>
+          <QueryLine
             filterFeatures={this.props.filterFeatures}
-            categoryName={this.props.showCategory}
-            allValues={this.props.allFeatures[this.props.showCategory]}
-            availableValues={this.props.showCategory in this.props.availableFeatures ? this.props.availableFeatures[this.props.showCategory] : []}
-          /></div>
+            handleRemoveFilter={this.handleRemoveFilter}
+          />
+          <div>
+            <CategorySelect
+              allFeatures={this.props.allFeatures}
+              availableFeatures={this.props.availableFeatures}
+              onSelectCategoryHandler={this.handleCategorySelect}
+            />
+            <div><CategoryDetail
+              onChangeHandler={(event) => this.handleCheckboxChange(event)}
+              filterFeatures={this.props.filterFeatures}
+              categoryName={this.props.showCategory}
+              allValues={this.props.allFeatures[this.props.showCategory]}
+              availableValues={this.props.showCategory in this.props.availableFeatures ? this.props.availableFeatures[this.props.showCategory] : []}
+            /></div>
           </div>
+        </div>
         );
       }
     }
