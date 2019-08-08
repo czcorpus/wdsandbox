@@ -1,10 +1,22 @@
 {
     "en-US": {
         "global__sandbox_title": "TypeScript + React + RxJS-based custom state management",
-        "global__sandbox_subtitle": "as you've seen in KonText and Word at a Glance"
+        "global__sandbox_subtitle": "as you've seen in KonText and Word at a Glance",
+        "taghelper__create_tag_heading": "Create a tag",
+        "taghelper__insert_btn": "Insert",
+        "taghelper__unfulfilled": "Unfulfilled",
+        "taghelper__reset": "Reset",
+        "taghelper__undo": "Undo",
+        "taghelper__cannot_parse": "The patterns containing alternations (e.g. \"N.M|N.F\") are not supported."
     },
     "cs-CZ": {
         "global__sandbox_title": "TypeScript + React + řízení stavu založené na RxJS",
-        "global__sandbox_subtitle": "znáte z aplikací KonText a Word at a Glance"
+        "global__sandbox_subtitle": "znáte z aplikací KonText a Word at a Glance",
+        "taghelper__create_tag_heading": "Vytvořit tag",
+        "taghelper__insert_btn": "Vložit",
+        "taghelper__unfulfilled": "Nevyplněno",
+        "taghelper__reset": "Obnovit",
+        "taghelper__undo": "Krok zpět",
+        "taghelper__cannot_parse": "Regulární výrazy obsahující alternace (např. \"N.M|N.F\") nejsou podporovány."
     }
 }
