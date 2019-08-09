@@ -38,9 +38,15 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
         this.actionMatch = {
             'TAGHELPER_PRESET_PATTERN': (state, action) => {
                 const newState = this.copyState(state);
-                // TODO
+                newState.displayPattern = '';
+                for (const filter of newState.filterFeaturesHistory[newState.filterFeaturesHistory.length - 1]) {
+                    if (newState.displayPattern) {
+                        newState.displayPattern += '|' + filter;
+                    } else {
+                        newState.displayPattern = filter;
+                    }
+                }
                 return newState;
-
             },
             'TAGHELPER_ON_SELECT_CATEGORY': (state, action) => {
                 const newState = this.copyState(state);
@@ -71,6 +77,11 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                         name: 'TAGHELPER_GET_FILTERED_FEATURES',
                         payload: {filter: newFilterFeatures}
                     });
+
+                    dispatcher.dispatch({
+                        name: 'TAGHELPER_PRESET_PATTERN',
+                        payload: {}
+                    });
                 }
                 return newState;
             },
@@ -86,6 +97,11 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                     dispatcher.dispatch({
                         name: 'TAGHELPER_GET_FILTERED_FEATURES',
                         payload: {filter: newFilterFeatures}
+                    });
+
+                    dispatcher.dispatch({
+                        name: 'TAGHELPER_PRESET_PATTERN',
+                        payload: {}
                     });
                 }
                 return newState;
@@ -111,6 +127,12 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                     name: 'TAGHELPER_GET_FILTERED_FEATURES',
                     payload: {filter: newState.filterFeaturesHistory[newState.filterFeaturesHistory.length-1]}
                 });
+
+                dispatcher.dispatch({
+                    name: 'TAGHELPER_PRESET_PATTERN',
+                    payload: {}
+                });
+
                 return newState;
             },
             'TAGHELPER_RESET': (state, action) => {
@@ -118,6 +140,12 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                 newState.filterFeaturesHistory = [[]];
                 newState.availableFeatures = newState.allFeatures;
                 newState.canUndo = false;
+
+                dispatcher.dispatch({
+                    name: 'TAGHELPER_PRESET_PATTERN',
+                    payload: {}
+                });
+
                 return newState;
             }
         };

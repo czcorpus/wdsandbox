@@ -24,16 +24,20 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
 
     render() {
         let checkboxes = this.props.allValues.sort().map(
-            value => <label key={value} style={this.props.availableValues.includes(value) ? {fontWeight: 'bold'} : {fontWeight: 'normal'}}><input
-              onChange={this.props.onChangeHandler}
-              type='checkbox'
-              name={this.props.categoryName}
-              value={value}
-              checked={this.props.filterFeatures.includes(composeFilter(this.props.categoryName, value)) ? true : false}
-            />{value}</label>
+            value => <li key={value}>
+              <label style={this.props.availableValues.includes(value) ? {fontWeight: 'bold'} : {fontWeight: 'normal'}}>
+                <input
+                  onChange={this.props.onChangeHandler}
+                  type='checkbox'
+                  name={this.props.categoryName}
+                  value={value}
+                  checked={this.props.filterFeatures.includes(composeFilter(this.props.categoryName, value)) ? true : false}
+                />{value}
+              </label>
+            </li>
         );
         return(
-            <div>{checkboxes}</div>
+            <ul>{checkboxes}</ul>
         );
     }
   }
@@ -108,7 +112,8 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
 
     componentDidMount() {
       dispatcher.dispatch({
-        name: 'TAGHELPER_GET_INITIAL_FEATURES'
+        name: 'TAGHELPER_GET_INITIAL_FEATURES',
+        payload: {}
       });
     }
 
