@@ -44,6 +44,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
   }
 
   class CategorySelect extends React.Component<{
+    selectedCategory:string;
     allFeatures:{};
     availableFeatures:{};
     onSelectCategoryHandler:(event) => void;
@@ -54,8 +55,13 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
       for (let category of Object.keys(this.props.allFeatures).sort()) {
         const availableValuesCount = (category in this.props.availableFeatures ? this.props.availableFeatures[category].length : 0);
         categories.push(
-          <button key={category} name={category} onClick={this.props.onSelectCategoryHandler}>
-            {category + " (" + availableValuesCount + ")"}
+          <button
+            key={category}
+            name={category}
+            onClick={this.props.onSelectCategoryHandler}
+            className={'util-button'}
+            style={this.props.selectedCategory===category ? {backgroundColor: 'yellow'} : {backgroundColor: null}}>
+          {category + " (" + availableValuesCount + ")"}
           </button>
         );
       }
@@ -75,8 +81,13 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
       for (let filter of this.props.filterFeatures[Symbol.iterator]()) {
         let [name, value] = filter.split("=");
         selected.push(
-          <button key={filter} name={name} value={value} onClick={this.props.handleRemoveFilter}>
-            {filter}
+          <button
+            key={filter}
+            name={name}
+            value={value}
+            className={'util-button'}
+            onClick={this.props.handleRemoveFilter}>
+          {filter}
           </button>
         );
       }
@@ -134,6 +145,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
             allFeatures={this.props.allFeatures}
             availableFeatures={this.props.availableFeatures}
             onSelectCategoryHandler={this.handleCategorySelect}
+            selectedCategory={this.props.showCategory}
           />
           <CategoryDetail
             onChangeHandler={(event) => this.handleCheckboxChange(event)}
