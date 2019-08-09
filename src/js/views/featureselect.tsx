@@ -2,13 +2,14 @@ import * as React from 'react';
 import { IActionDispatcher, ViewUtils } from 'kombo';
 import { GlobalComponents } from './global';
 import { composeFilter, UDTagBuilderModel } from '../models/tagbuilder';
+import * as Immutable from 'immutable';
 
 export interface FeatureSelectProps {
   error:Error|null;
   isLoaded:boolean;
   allFeatures:{};
   availableFeatures:{};
-  filterFeatures:Array<string>;
+  filterFeatures:Immutable.List<string>;
   showCategory:string;
 }
 
@@ -19,7 +20,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
     availableValues:Array<string>;
     onChangeHandler:(event) => void;
     categoryName:string;
-    filterFeatures:Array<string>;
+    filterFeatures:Immutable.List<string>;
   }> {
 
     render() {
@@ -65,13 +66,13 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
   }
 
   class QueryLine extends React.Component<{
-    filterFeatures:Array<string>;
+    filterFeatures:Immutable.List<string>;
     handleRemoveFilter:(event) => void;
   }> {
 
     render() {
       let selected = []
-      for (let filter of this.props.filterFeatures) {
+      for (let filter of this.props.filterFeatures[Symbol.iterator]()) {
         let [name, value] = filter.split("=");
         selected.push(
           <button key={filter} name={name} value={value} onClick={this.props.handleRemoveFilter}>
