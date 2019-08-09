@@ -180,8 +180,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
                             allFeatures={this.props.allFeatures}
                             availableFeatures={this.props.availableFeatures}
                             filterFeatures={this.props.filterFeaturesHistory.last()}
-                            showCategory={this.props.showCategory}
-                        />
+                            showCategory={this.props.showCategory} />
                     </div>
                 </div>
             );
