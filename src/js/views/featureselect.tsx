@@ -66,7 +66,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
         handleRemoveFilter:(event) => void;
     }> = (props) => {
         let selected = []
-        for (let filter of props.filterFeatures[Symbol.iterator]()) {
+        for (let filter of props.filterFeatures.sort()[Symbol.iterator]()) {
             let [name, value] = filter.split("=");
             selected.push(
                 <button
