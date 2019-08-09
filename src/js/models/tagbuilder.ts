@@ -1,6 +1,7 @@
 import { StatelessModel, IActionDispatcher, Action, SEDispatcher } from 'kombo';
 import { ajax$ } from '../common/ajax';
 import { HTTPMethod } from '../common/types';
+import * as Immutable from 'immutable';
 
 
 
@@ -21,7 +22,7 @@ export interface UDTagBuilderModelState {
     isLoaded: boolean;
     allFeatures: {},
     availableFeatures: {},
-    filterFeaturesHistory: Array<Array<string>>;
+    filterFeaturesHistory: Immutable.List<Array<string>>;
     showCategory: string;
     requestUrl: string;
 }
@@ -39,7 +40,7 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
             'TAGHELPER_PRESET_PATTERN': (state, action) => {
                 const newState = this.copyState(state);
                 newState.displayPattern = '';
-                for (const filter of newState.filterFeaturesHistory[newState.filterFeaturesHistory.length - 1]) {
+                for (const filter of newState.filterFeaturesHistory.last()) {
                     if (newState.displayPattern) {
                         newState.displayPattern += '|' + filter;
                     } else {
@@ -67,10 +68,10 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
             'TAGHELPER_ADD_FILTER': (state, action) => {
                 const newState = this.copyState(state);
                 const filter = composeFilter(action.payload['name'], action.payload['value']);
-                const filterFeatures = newState.filterFeaturesHistory[newState.filterFeaturesHistory.length - 1];
+                const filterFeatures = newState.filterFeaturesHistory.last();
                 if (!filterFeatures.includes(filter)) {
                     const newFilterFeatures = [...filterFeatures, filter];
-                    newState.filterFeaturesHistory.push(newFilterFeatures);
+                    newState.filterFeaturesHistory = newState.filterFeaturesHistory.push(newFilterFeatures);
                     newState.canUndo = true;
                     
                     dispatcher.dispatch({
@@ -88,10 +89,10 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
             'TAGHELPER_REMOVE_FILTER': (state, action) => {
                 const newState = this.copyState(state);
                 const filter = composeFilter(action.payload['name'], action.payload['value']);
-                const filterFeatures = newState.filterFeaturesHistory[newState.filterFeaturesHistory.length - 1];
+                const filterFeatures = newState.filterFeaturesHistory.last();
                 if (filterFeatures.includes(filter)) {
                     const newFilterFeatures = filterFeatures.filter((value, index, arr) => (value !== filter));
-                    newState.filterFeaturesHistory.push(newFilterFeatures)
+                    newState.filterFeaturesHistory = newState.filterFeaturesHistory.push(newFilterFeatures)
                     newState.canUndo = true;
 
                     dispatcher.dispatch({
@@ -118,14 +119,14 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
             },
             'TAGHELPER_UNDO': (state, action) => {
                 const newState = this.copyState(state);
-                newState.filterFeaturesHistory.pop();
-                if (newState.filterFeaturesHistory.length===1) {
+                newState.filterFeaturesHistory = newState.filterFeaturesHistory.delete(-1);
+                if (newState.filterFeaturesHistory.size===1) {
                     newState.canUndo = false;
                 }
                 
                 dispatcher.dispatch({
                     name: 'TAGHELPER_GET_FILTERED_FEATURES',
-                    payload: {filter: newState.filterFeaturesHistory[newState.filterFeaturesHistory.length-1]}
+                    payload: {filter: newState.filterFeaturesHistory.last()}
                 });
 
                 dispatcher.dispatch({
@@ -137,7 +138,7 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
             },
             'TAGHELPER_RESET': (state, action) => {
                 const newState = this.copyState(state);
-                newState.filterFeaturesHistory = [[]];
+                newState.filterFeaturesHistory = Immutable.List([[]]);
                 newState.availableFeatures = newState.allFeatures;
                 newState.canUndo = false;
 

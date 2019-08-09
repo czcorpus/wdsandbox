@@ -25,6 +25,7 @@ import { AppTools } from './appTools';
 import { GlobalComponents,  init as globalCompInit  } from './views/global';
 import { SandboxRootComponentProps, init as sandboxViewInit } from './views/sandbox';
 import { UDTagBuilderModel } from './models/tagbuilder';
+import * as Immutable from 'immutable';
 
 
 export interface InitIntArgs {
@@ -54,7 +55,7 @@ export function createRootComponent({dispatcher, onResize, viewUtils}:InitIntArg
             isLoaded: false,
             allFeatures: {},
             availableFeatures: {},
-            filterFeaturesHistory: [[]],
+            filterFeaturesHistory: Immutable.List([[]]),
             showCategory: 'POS',
             requestUrl: "http://localhost:8080/",
         }
