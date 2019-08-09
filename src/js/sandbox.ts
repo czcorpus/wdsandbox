@@ -55,7 +55,7 @@ export function createRootComponent({dispatcher, onResize, viewUtils}:InitIntArg
             isLoaded: false,
             allFeatures: {},
             availableFeatures: {},
-            filterFeaturesHistory: Immutable.List([[]]),
+            filterFeaturesHistory: Immutable.List([Immutable.List([])]),
             showCategory: 'POS',
             requestUrl: "http://localhost:8080/",
         }
