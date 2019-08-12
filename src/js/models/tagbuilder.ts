@@ -2,8 +2,18 @@ import { StatelessModel, IActionDispatcher, Action, SEDispatcher } from 'kombo';
 import { ajax$ } from '../common/ajax';
 import { HTTPMethod } from '../common/types';
 import * as Immutable from 'immutable';
+import { string } from 'prop-types';
 
 
+export class FilterRecord extends Immutable.Record({name: undefined, value: undefined}) {
+    composeString():string {
+        return this.get('name') + '=' + this.get('value')
+    }
+
+    compare(that:FilterRecord):number {
+        return this.composeString < that.composeString ? -1 : 1;
+    }
+}
 
 export interface UDTagBuilderModelState {
 
@@ -22,13 +32,13 @@ export interface UDTagBuilderModelState {
     isLoaded: boolean;
     allFeatures: Immutable.Map<string, Immutable.List<string>>,
     availableFeatures: Immutable.Map<string, Immutable.List<string>>,
-    filterFeaturesHistory: Immutable.List<Immutable.List<string>>;
+    filterFeaturesHistory: Immutable.List<Immutable.List<FilterRecord>>;
     showCategory: string;
     requestUrl: string;
 }
 
-export function composeFilter(name:string, value:string):string {
-    return name + "=" + value;
+function composePattern(state:UDTagBuilderModelState):string {
+    return state.filterFeaturesHistory.last().map(x => x.composeString()).sort().join('|');
 }
 
 export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
@@ -56,13 +66,13 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
             },
             'TAGHELPER_ADD_FILTER': (state, action) => {
                 const newState = this.copyState(state);
-                const filter = composeFilter(action.payload['name'], action.payload['value']);
+                const filter = new FilterRecord(action.payload);
                 const filterFeatures = newState.filterFeaturesHistory.last();
-                if (!filterFeatures.includes(filter)) {
+                if (filterFeatures.every(x => !x.equals(filter))) {
                     const newFilterFeatures = filterFeatures.push(filter);
                     newState.filterFeaturesHistory = newState.filterFeaturesHistory.push(newFilterFeatures);
                     newState.canUndo = true;
-                    newState.displayPattern = newState.filterFeaturesHistory.last().sort().join('|');
+                    newState.displayPattern = composePattern(newState);
 
                     dispatcher.dispatch({
                         name: 'TAGHELPER_GET_FILTERED_FEATURES',
@@ -73,19 +83,19 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
             },
             'TAGHELPER_REMOVE_FILTER': (state, action) => {
                 const newState = this.copyState(state);
-                const filter = composeFilter(action.payload['name'], action.payload['value']);
+                const filter = new FilterRecord(action.payload);
                 const filterFeatures = newState.filterFeaturesHistory.last();
-                if (filterFeatures.includes(filter)) {
-                    const newFilterFeatures = filterFeatures.filter((value, index, arr) => (value !== filter));
-                    newState.filterFeaturesHistory = newState.filterFeaturesHistory.push(Immutable.List(newFilterFeatures))
-                    newState.canUndo = true;
-                    newState.displayPattern = newState.filterFeaturesHistory.last().sort().join('|');
+                
+                const newFilterFeatures = filterFeatures.filterNot((value) => value.equals(filter));
+                newState.filterFeaturesHistory = newState.filterFeaturesHistory.push(Immutable.List(newFilterFeatures))
+                newState.canUndo = true;
+                newState.displayPattern = composePattern(newState);
 
-                    dispatcher.dispatch({
-                        name: 'TAGHELPER_GET_FILTERED_FEATURES',
-                        payload: {filter: newFilterFeatures}
-                    });
-                }
+                dispatcher.dispatch({
+                    name: 'TAGHELPER_GET_FILTERED_FEATURES',
+                    payload: {filter: newFilterFeatures}
+                });
+
                 return newState;
             },
             'TAGHELPER_LOAD_FILTERED_DATA_DONE': (state, action) => {
@@ -104,7 +114,7 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                 if (newState.filterFeaturesHistory.size===1) {
                     newState.canUndo = false;
                 }
-                newState.displayPattern = newState.filterFeaturesHistory.last().sort().join('|');
+                newState.displayPattern = composePattern(newState);
 
                 dispatcher.dispatch({
                     name: 'TAGHELPER_GET_FILTERED_FEATURES',
@@ -118,7 +128,7 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                 newState.filterFeaturesHistory = Immutable.List([Immutable.List([])]);
                 newState.availableFeatures = newState.allFeatures;
                 newState.canUndo = false;
-                newState.displayPattern = newState.filterFeaturesHistory.last().sort().join('|');
+                newState.displayPattern = composePattern(newState);
 
                 return newState;
             }
@@ -149,17 +159,10 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
             break;
 
             case 'TAGHELPER_GET_FILTERED_FEATURES':
-                let query = ''
-                for (let feature of action.payload['filter'][Symbol.iterator]()) {
-                    if (query) {
-                        query += "&" + feature;
-                    } else {
-                        query = "?" + feature;
-                    }
-                }
+                const query = action.payload['filter'].map(x => x.composeString()).join('&');
                 ajax$(
                     HTTPMethod.GET,
-                    state.requestUrl + query,
+                    query ? state.requestUrl + '?' + query : state.requestUrl,
                     {}
                 ).subscribe(
                     (result) => {

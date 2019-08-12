@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IActionDispatcher, ViewUtils } from 'kombo';
 import { GlobalComponents } from './global';
-import { composeFilter, UDTagBuilderModel } from '../models/tagbuilder';
+import { FilterRecord, UDTagBuilderModel } from '../models/tagbuilder';
 import * as Immutable from 'immutable';
 
 export interface FeatureSelectProps {
@@ -9,7 +9,7 @@ export interface FeatureSelectProps {
     isLoaded:boolean;
     allFeatures:Immutable.Map<string, Immutable.List<string>>;
     availableFeatures:Immutable.Map<string, Immutable.List<string>>;
-    filterFeatures:Immutable.List<string>;
+    filterFeatures:Immutable.List<FilterRecord>;
     showCategory:string;
 }
 
@@ -20,7 +20,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
         availableValues:Immutable.List<string>;
         onChangeHandler:(event) => void;
         categoryName:string;
-        filterFeatures:Immutable.List<string>;
+        filterFeatures:Immutable.List<FilterRecord>;
     }> = (props) => {
         const checkboxes = props.allValues.sort().map(
             (value) => <li key={value}>
@@ -30,7 +30,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
                         type='checkbox'
                         name={props.categoryName}
                         value={value}
-                        checked={props.filterFeatures.includes(composeFilter(props.categoryName, value)) ? true : false} />
+                        checked={props.filterFeatures.some(x => (x.get('name')===props.categoryName && x.get('value')===value) ? true : false)} />
                     {value}
                 </label>
             </li>
@@ -59,19 +59,18 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
     }
 
     const QueryLine:React.FunctionComponent<{
-        filterFeatures:Immutable.List<string>;
+        filterFeatures:Immutable.List<FilterRecord>;
         handleRemoveFilter:(event) => void;
     }> = (props) => {
-        const selected = props.filterFeatures.sort().map(function(filter) {
-            const [name, value] = filter.split("=");
-            return <button
-                    key={filter}
-                    name={name}
-                    value={value}
-                    className={'util-button'}
-                    onClick={props.handleRemoveFilter}>
-                {filter}
-                </button>
+        const selected = props.filterFeatures.sort((a, b) => a.compare(b)).map( filter => {
+            <button
+                key={filter.composeString()}
+                name={filter.get('name')}
+                value={filter.get('value')}
+                className={'util-button'}
+                onClick={props.handleRemoveFilter}>
+            {filter}
+            </button>
         })
         return <div><p>Remove filter: {selected}</p></div>;
     }
