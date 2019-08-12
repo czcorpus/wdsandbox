@@ -126,21 +126,38 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
                         <QueryLine
                             filterFeatures={this.props.filterFeatures}
                             handleRemoveFilter={this.handleRemoveFilter} />
-                        <CategorySelect
-                            allFeatures={this.props.allFeatures}
-                            availableFeatures={this.props.availableFeatures}
-                            onSelectCategoryHandler={this.handleCategorySelect}
-                            selectedCategory={this.props.showCategory} />
-                        <CategoryDetail
-                            onChangeHandler={(event) => this.handleCheckboxChange(event)}
-                            filterFeatures={this.props.filterFeatures}
-                            categoryName={this.props.showCategory}
-                            allValues={this.props.allFeatures[this.props.showCategory]}
-                            availableValues={
-                                this.props.showCategory in this.props.availableFeatures ?
-                                this.props.availableFeatures[this.props.showCategory] :
-                                []
-                            } />
+                        <div style={{display: "flex", alignItems: "flex-start"}}>
+                            <div style={{whiteSpace: "nowrap", padding: "1em", margin: "0 2em", borderStyle: "solid"}}>
+                                <p>POS tag:</p>
+                                <CategoryDetail
+                                    onChangeHandler={(event) => this.handleCheckboxChange(event)}
+                                    filterFeatures={this.props.filterFeatures}
+                                    categoryName="POS"
+                                    allValues={this.props.allFeatures["POS"]}
+                                    availableValues={
+                                        "POS" in this.props.availableFeatures ?
+                                        this.props.availableFeatures["POS"] :
+                                        []
+                                    } />
+                            </div>
+                            <div>
+                                <CategorySelect
+                                    allFeatures={this.props.allFeatures}
+                                    availableFeatures={this.props.availableFeatures}
+                                    onSelectCategoryHandler={this.handleCategorySelect}
+                                    selectedCategory={this.props.showCategory} />
+                                <CategoryDetail
+                                    onChangeHandler={(event) => this.handleCheckboxChange(event)}
+                                    filterFeatures={this.props.filterFeatures}
+                                    categoryName={this.props.showCategory}
+                                    allValues={this.props.allFeatures[this.props.showCategory]}
+                                    availableValues={
+                                        this.props.showCategory in this.props.availableFeatures ?
+                                        this.props.availableFeatures[this.props.showCategory] :
+                                        []
+                                    } />
+                            </div>
+                        </div>
                     </div>
                 );
             }
