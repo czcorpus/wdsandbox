@@ -20,8 +20,8 @@ export interface UDTagBuilderModelState {
     // ...
     error: Error|null;
     isLoaded: boolean;
-    allFeatures: Immutable.Map<string, Array<string>>,
-    availableFeatures: Immutable.Map<string, Array<string>>,
+    allFeatures: Immutable.Map<string, Immutable.List<string>>,
+    availableFeatures: Immutable.Map<string, Immutable.List<string>>,
     filterFeaturesHistory: Immutable.List<Immutable.List<string>>;
     showCategory: string;
     requestUrl: string;
@@ -46,7 +46,7 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                 const newState = this.copyState(state);
                 newState.isLoaded = true;
                 if (!action.error) {
-                    newState.allFeatures = Immutable.Map(action.payload['result']);
+                    newState.allFeatures = Immutable.Map(Immutable.Map(action.payload['result']).map(x => Immutable.List(x)));
                     newState.availableFeatures = newState.allFeatures;
                     newState.showCategory = newState.allFeatures.keySeq().sort().first()
                 } else {
@@ -92,7 +92,7 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                 const newState = this.copyState(state);
                 newState.isLoaded = true;
                 if (!action.error) {
-                    newState.availableFeatures = Immutable.Map(action.payload['result']);
+                    newState.availableFeatures = Immutable.Map(Immutable.Map(action.payload['result']).map(x => Immutable.List(x)));
                 } else {
                     newState.error = action.error;
                 }

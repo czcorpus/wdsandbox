@@ -7,8 +7,8 @@ import * as Immutable from 'immutable';
 export interface FeatureSelectProps {
     error:Error|null;
     isLoaded:boolean;
-    allFeatures:Immutable.Map<string, Array<string>>;
-    availableFeatures:Immutable.Map<string, Array<string>>;
+    allFeatures:Immutable.Map<string, Immutable.List<string>>;
+    availableFeatures:Immutable.Map<string, Immutable.List<string>>;
     filterFeatures:Immutable.List<string>;
     showCategory:string;
 }
@@ -16,8 +16,8 @@ export interface FeatureSelectProps {
 export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents>):React.ComponentClass<FeatureSelectProps> {
   
     const CategoryDetail:React.FunctionComponent<{
-        allValues:Array<string>;
-        availableValues:Array<string>;
+        allValues:Immutable.List<string>;
+        availableValues:Immutable.List<string>;
         onChangeHandler:(event) => void;
         categoryName:string;
         filterFeatures:Immutable.List<string>;
@@ -40,12 +40,12 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
 
     const CategorySelect:React.FunctionComponent<{
         selectedCategory:string;
-        allFeatures:Immutable.Map<string, Array<string>>;
-        availableFeatures:Immutable.Map<string, Array<string>>;
+        allFeatures:Immutable.Map<string, Immutable.List<string>>;
+        availableFeatures:Immutable.Map<string, Immutable.List<string>>;
         onSelectCategoryHandler:(event) => void;
     }> = (props) => {
         const categories = props.allFeatures.keySeq().sort().map(function(category) {
-            const availableValuesCount = (props.availableFeatures.has(category) ? props.availableFeatures.get(category).length : 0);
+            const availableValuesCount = (props.availableFeatures.has(category) ? props.availableFeatures.get(category).size : 0);
             return <button
                     key={category}
                     name={category}
@@ -131,7 +131,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
                                     availableValues={
                                         this.props.availableFeatures.has("POS") ?
                                         this.props.availableFeatures.get("POS") :
-                                        []
+                                        Immutable.List([])
                                     } />
                             </div>
                             <div>
@@ -148,7 +148,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
                                     availableValues={
                                         this.props.availableFeatures.has(this.props.showCategory) ?
                                         this.props.availableFeatures.get(this.props.showCategory) :
-                                        []
+                                        Immutable.List([])
                                     } />
                             </div>
                         </div>
