@@ -44,7 +44,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
         availableFeatures:{};
         onSelectCategoryHandler:(event) => void;
     }> = (props) => {
-        const categories = Object.keys(props.allFeatures).sort().map(function(category) {
+        const categories = Object.keys(props.allFeatures).filter(x => x !== 'POS').sort().map(function(category) {
             const availableValuesCount = (category in props.availableFeatures ? props.availableFeatures[category].length : 0);
             return <button
                     key={category}
