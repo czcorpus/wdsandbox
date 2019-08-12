@@ -7,8 +7,8 @@ import * as Immutable from 'immutable';
 export interface FeatureSelectProps {
     error:Error|null;
     isLoaded:boolean;
-    allFeatures:{};
-    availableFeatures:{};
+    allFeatures:Immutable.Map<string, Array<string>>;
+    availableFeatures:Immutable.Map<string, Array<string>>;
     filterFeatures:Immutable.List<string>;
     showCategory:string;
 }
@@ -40,12 +40,12 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
 
     const CategorySelect:React.FunctionComponent<{
         selectedCategory:string;
-        allFeatures:{};
-        availableFeatures:{};
+        allFeatures:Immutable.Map<string, Array<string>>;
+        availableFeatures:Immutable.Map<string, Array<string>>;
         onSelectCategoryHandler:(event) => void;
     }> = (props) => {
-        const categories = Object.keys(props.allFeatures).filter(x => x !== 'POS').sort().map(function(category) {
-            const availableValuesCount = (category in props.availableFeatures ? props.availableFeatures[category].length : 0);
+        const categories = props.allFeatures.keySeq().sort().map(function(category) {
+            const availableValuesCount = (props.availableFeatures.has(category) ? props.availableFeatures.get(category).length : 0);
             return <button
                     key={category}
                     name={category}
@@ -127,16 +127,16 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
                                     onChangeHandler={(event) => this.handleCheckboxChange(event)}
                                     filterFeatures={this.props.filterFeatures}
                                     categoryName="POS"
-                                    allValues={this.props.allFeatures["POS"]}
+                                    allValues={this.props.allFeatures.get("POS")}
                                     availableValues={
-                                        "POS" in this.props.availableFeatures ?
-                                        this.props.availableFeatures["POS"] :
+                                        this.props.availableFeatures.has("POS") ?
+                                        this.props.availableFeatures.get("POS") :
                                         []
                                     } />
                             </div>
                             <div>
                                 <CategorySelect
-                                    allFeatures={this.props.allFeatures}
+                                    allFeatures={this.props.allFeatures.delete("POS")}
                                     availableFeatures={this.props.availableFeatures}
                                     onSelectCategoryHandler={this.handleCategorySelect}
                                     selectedCategory={this.props.showCategory} />
@@ -144,10 +144,10 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
                                     onChangeHandler={(event) => this.handleCheckboxChange(event)}
                                     filterFeatures={this.props.filterFeatures}
                                     categoryName={this.props.showCategory}
-                                    allValues={this.props.allFeatures[this.props.showCategory]}
+                                    allValues={this.props.allFeatures.get(this.props.showCategory)}
                                     availableValues={
-                                        this.props.showCategory in this.props.availableFeatures ?
-                                        this.props.availableFeatures[this.props.showCategory] :
+                                        this.props.availableFeatures.has(this.props.showCategory) ?
+                                        this.props.availableFeatures.get(this.props.showCategory) :
                                         []
                                     } />
                             </div>
