@@ -60,6 +60,7 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                 if (!action.error) {
                     newState.allFeatures = action.payload['result'];
                     newState.availableFeatures = action.payload['result'];
+                    newState.showCategory = Object.keys(newState.allFeatures).sort()[0]
                 } else {
                     newState.error = action.error;
                 }
@@ -159,7 +160,6 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                     HTTPMethod.GET,
                     state.requestUrl,
                     {}
-
                 ).subscribe(
                     (result) => {
                         dispatch({
@@ -185,9 +185,11 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                         query = "?" + feature;
                     }
                 }
-                console.log('Sending request...', action.payload['filter'])
-                fetch(state.requestUrl + query).then(res => res.json())
-                .then(
+                ajax$(
+                    HTTPMethod.GET,
+                    state.requestUrl + query,
+                    {}
+                ).subscribe(
                     (result) => {
                         dispatch({
                             name: 'TAGHELPER_LOAD_FILTERED_DATA_DONE',
