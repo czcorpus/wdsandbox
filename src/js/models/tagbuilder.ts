@@ -61,7 +61,7 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                     newState.allFeatures = action.payload['result'];
                     newState.availableFeatures = action.payload['result'];
                 } else {
-                    newState.error = action.error;                    
+                    newState.error = action.error;
                 }
                 return newState;
             },
@@ -73,7 +73,7 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                     const newFilterFeatures = filterFeatures.push(filter);
                     newState.filterFeaturesHistory = newState.filterFeaturesHistory.push(newFilterFeatures);
                     newState.canUndo = true;
-                    
+
                     dispatcher.dispatch({
                         name: 'TAGHELPER_GET_FILTERED_FEATURES',
                         payload: {filter: newFilterFeatures}
@@ -113,7 +113,7 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                 if (!action.error) {
                     newState.availableFeatures = action.payload['result'];
                 } else {
-                    newState.error = action.error;                    
+                    newState.error = action.error;
                 }
                 return newState;
             },
@@ -123,7 +123,7 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                 if (newState.filterFeaturesHistory.size===1) {
                     newState.canUndo = false;
                 }
-                
+
                 dispatcher.dispatch({
                     name: 'TAGHELPER_GET_FILTERED_FEATURES',
                     payload: {filter: newState.filterFeaturesHistory.last()}
@@ -155,7 +155,12 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
     sideEffects(state:UDTagBuilderModelState, action:Action, dispatch:SEDispatcher) {
         switch (action.name) {
             case 'TAGHELPER_GET_INITIAL_FEATURES':
-                fetch(state.requestUrl).then(res => res.json()).then(
+                ajax$(
+                    HTTPMethod.GET,
+                    state.requestUrl,
+                    {}
+
+                ).subscribe(
                     (result) => {
                         dispatch({
                             name: 'TAGHELPER_GET_INITIAL_FEATURES_DONE',
