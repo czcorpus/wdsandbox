@@ -13,8 +13,14 @@ class Handler:
     async def __call__(self, request):
         print(f'Handling request for parameters {request.rel_url.query}')
         variations = self._variations
+        filters = collections.defaultdict(list)
+        # sort filter values by category
         for param, value in request.rel_url.query.items():
-            variations = list(filter(lambda x: (param, value) in x, self._variations))
+            filters[param].append(value)
+        # filter OR logic for values of the same category, AND logic accross categories
+        for param, values in filters.items():
+            variations = list(filter(lambda x: any((param, value) in x for value in values), variations))
+            print(type(variations))
         possible_values = parser.get_possible_values(variations)
         return web.json_response(possible_values)
 
