@@ -22,7 +22,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
         categoryName:string;
         filterFeatures:Immutable.List<string>;
     }> = (props) => {
-        let checkboxes = props.allValues.sort().map(
+        const checkboxes = props.allValues.sort().map(
             (value) => <li key={value}>
                 <label style={props.availableValues.includes(value) ? {fontWeight: 'bold'} : {fontWeight: 'normal'}}>
                     <input
@@ -44,11 +44,9 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
         availableFeatures:{};
         onSelectCategoryHandler:(event) => void;
     }> = (props) => {
-        let categories = []
-        for (let category of Object.keys(props.allFeatures).sort()) {
+        const categories = Object.keys(props.allFeatures).sort().map(function(category) {
             const availableValuesCount = (category in props.availableFeatures ? props.availableFeatures[category].length : 0);
-            categories.push(
-                <button
+            return <button
                     key={category}
                     name={category}
                     onClick={props.onSelectCategoryHandler}
@@ -56,8 +54,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
                     style={props.selectedCategory===category ? {backgroundColor: 'yellow'} : {backgroundColor: null}}>
                 {category + " (" + availableValuesCount + ")"}
                 </button>
-            );
-        }
+        })
         return <div>{categories}</div>;
     }
 
@@ -65,11 +62,9 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
         filterFeatures:Immutable.List<string>;
         handleRemoveFilter:(event) => void;
     }> = (props) => {
-        let selected = []
-        for (let filter of props.filterFeatures.sort()[Symbol.iterator]()) {
-            let [name, value] = filter.split("=");
-            selected.push(
-                <button
+        const selected = props.filterFeatures.sort().map(function(filter) {
+            const [name, value] = filter.split("=");
+            return <button
                     key={filter}
                     name={name}
                     value={value}
@@ -77,8 +72,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
                     onClick={props.handleRemoveFilter}>
                 {filter}
                 </button>
-            );
-        }
+        })
         return <div><p>Remove filter: {selected}</p></div>;
     }
 
