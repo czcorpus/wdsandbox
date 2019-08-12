@@ -37,18 +37,6 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
         super(dispatcher, initialState);
         this.DEBUG_onActionMatch((state, action, _) => {console.log(action)});
         this.actionMatch = {
-            'TAGHELPER_PRESET_PATTERN': (state, action) => {
-                const newState = this.copyState(state);
-                newState.displayPattern = '';
-                for (const filter of newState.filterFeaturesHistory.last()[Symbol.iterator]()) {
-                    if (newState.displayPattern) {
-                        newState.displayPattern += '|' + filter;
-                    } else {
-                        newState.displayPattern = filter;
-                    }
-                }
-                return newState;
-            },
             'TAGHELPER_ON_SELECT_CATEGORY': (state, action) => {
                 const newState = this.copyState(state);
                 newState.showCategory = action.payload['name'];
@@ -74,15 +62,11 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                     const newFilterFeatures = filterFeatures.push(filter);
                     newState.filterFeaturesHistory = newState.filterFeaturesHistory.push(newFilterFeatures);
                     newState.canUndo = true;
+                    newState.displayPattern = newState.filterFeaturesHistory.last().sort().join('|');
 
                     dispatcher.dispatch({
                         name: 'TAGHELPER_GET_FILTERED_FEATURES',
                         payload: {filter: newFilterFeatures}
-                    });
-
-                    dispatcher.dispatch({
-                        name: 'TAGHELPER_PRESET_PATTERN',
-                        payload: {}
                     });
                 }
                 return newState;
@@ -95,15 +79,11 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                     const newFilterFeatures = filterFeatures.filter((value, index, arr) => (value !== filter));
                     newState.filterFeaturesHistory = newState.filterFeaturesHistory.push(Immutable.List(newFilterFeatures))
                     newState.canUndo = true;
+                    newState.displayPattern = newState.filterFeaturesHistory.last().sort().join('|');
 
                     dispatcher.dispatch({
                         name: 'TAGHELPER_GET_FILTERED_FEATURES',
                         payload: {filter: newFilterFeatures}
-                    });
-
-                    dispatcher.dispatch({
-                        name: 'TAGHELPER_PRESET_PATTERN',
-                        payload: {}
                     });
                 }
                 return newState;
@@ -124,15 +104,11 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                 if (newState.filterFeaturesHistory.size===1) {
                     newState.canUndo = false;
                 }
+                newState.displayPattern = newState.filterFeaturesHistory.last().sort().join('|');
 
                 dispatcher.dispatch({
                     name: 'TAGHELPER_GET_FILTERED_FEATURES',
                     payload: {filter: newState.filterFeaturesHistory.last()}
-                });
-
-                dispatcher.dispatch({
-                    name: 'TAGHELPER_PRESET_PATTERN',
-                    payload: {}
                 });
 
                 return newState;
@@ -142,11 +118,7 @@ export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {
                 newState.filterFeaturesHistory = Immutable.List([Immutable.List([])]);
                 newState.availableFeatures = newState.allFeatures;
                 newState.canUndo = false;
-
-                dispatcher.dispatch({
-                    name: 'TAGHELPER_PRESET_PATTERN',
-                    payload: {}
-                });
+                newState.displayPattern = newState.filterFeaturesHistory.last().sort().join('|');
 
                 return newState;
             }
