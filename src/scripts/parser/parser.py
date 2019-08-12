@@ -1,7 +1,6 @@
 from typing import Set, Tuple, List, Dict
 from collections import defaultdict
 
-
 def parse_word_line(line: str) -> Tuple[Tuple[str, str], ...]:
     ''' parses word line to get POS and features '''
 
@@ -13,7 +12,7 @@ def parse_word_line(line: str) -> Tuple[Tuple[str, str], ...]:
         if k_v != '_'  # `_` denotes absence according to Universal Dependencies
     ]
     data.append(('POS', pos))
-    
+
     # check multiple keys of the same kind
     if len([x[0] for x in data]) > len(set(x[0] for x in data)):
         print(f'multiple keys in {data}')
@@ -32,14 +31,15 @@ def get_possible_values(variations: List[Tuple[Tuple[str, str], ...]]) -> Dict[s
     return {k: list(v) for k, v in possible_values.items()}
 
 
-# prepare all variations from vertical data
-variations: Set[Tuple[Tuple[str, str], ...]] = set()
-with open('vertikala_pdt', 'r') as f:
-    for line in f:
-        if line.strip().startswith('<'):  # skip lines with xml tags
-            continue
-        variations.add(parse_word_line(line))
-variations: List[Tuple[Tuple[str, str], ...]] = list(variations)
+def load_variations(src_path) -> List[Tuple[Tuple[str, str], ...]]:
+    # prepare all variations from vertical data
+    variations: Set[Tuple[Tuple[str, str], ...]] = set()
+    with open(src_path, 'r') as f:
+        for line in f:
+            if line.strip().startswith('<'):  # skip lines with xml tags
+                continue
+            variations.add(parse_word_line(line))
+    return list(variations)
 
 
 # examples of filters, can be chained
