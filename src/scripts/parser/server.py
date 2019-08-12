@@ -13,7 +13,10 @@ async def handle(request):
     for param, values in filters.items():
         variations = list(filter(any(lambda x: (param, value) in x), variations))
     possible_values = parser.get_possible_values(variations)
-    return web.json_response(possible_values)
+    return web.json_response(possible_values, headers = {
+        'Access-Control-Allow-Origin': '*'
+    })
+    
 
 # run server serving possible word features
 # using HTML query you can filter features
