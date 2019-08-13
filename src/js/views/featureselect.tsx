@@ -96,7 +96,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
 
         handleCategorySelect(event) {
             dispatcher.dispatch({
-                name: 'TAGHELPER_ON_SELECT_CATEGORY',
+                name: 'TAGHELPER_SELECT_CATEGORY',
                 payload: {name: event.target.name}
             });
         }
