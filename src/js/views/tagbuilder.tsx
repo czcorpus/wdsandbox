@@ -135,7 +135,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
                     name: props.actionPrefix + 'QUERY_INPUT_APPEND_QUERY',
                     payload: {
                         sourceId: props.sourceId,
-                        query: `[tag="${props.displayPattern}"]`
+                        query: `[${props.displayPattern}]`
                     }
                 });
             }

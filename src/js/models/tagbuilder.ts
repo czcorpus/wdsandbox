@@ -7,12 +7,21 @@ import { string } from 'prop-types';
 
 export class FilterRecord extends Immutable.Record({name: undefined, value: undefined}) {
     composeString():string {
-        return this.get('name') + '=' + this.get('value');
+        return this.valueSeq().join('=');
     }
 
     compare(that:FilterRecord):number {
-        return this.composeString < that.composeString ? -1 : 1;
+        return this.composeString() < that.composeString() ? -1 : 1;
     }
+}
+
+function composePattern(state:UDTagBuilderModelState):string {
+    return state.filterFeaturesHistory.last().groupBy(x => x.get('name')).map(
+        (value, key) =>
+            key==='POS' ?
+            `pos="${value.map(x => x.get('value')).join('|')}"` :
+            `ufeat="${value.map(x => x.composeString()).join('|')}"`
+    ).valueSeq().sort().join(' & ');
 }
 
 export interface UDTagBuilderModelState {
@@ -35,10 +44,6 @@ export interface UDTagBuilderModelState {
     filterFeaturesHistory: Immutable.List<Immutable.List<FilterRecord>>;
     showCategory: string;
     requestUrl: string;
-}
-
-function composePattern(state:UDTagBuilderModelState):string {
-    return state.filterFeaturesHistory.last().map(x => x.composeString()).sort().join('|');
 }
 
 export class UDTagBuilderModel extends StatelessModel<UDTagBuilderModelState> {

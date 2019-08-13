@@ -22,7 +22,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
         categoryName:string;
         filterFeatures:Immutable.List<FilterRecord>;
     }> = (props) => {
-        const categoryFilterRecord = new FilterRecord({'name': props.categoryName})
+        const categoryFilterRecord = new FilterRecord({'name': props.categoryName});
         const checkboxes = props.allValues.sort().map(value => {
             const filterRecord = categoryFilterRecord.set('value', value);
             return <li key={value}>
