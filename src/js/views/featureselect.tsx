@@ -22,19 +22,21 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
         categoryName:string;
         filterFeatures:Immutable.List<FilterRecord>;
     }> = (props) => {
-        const checkboxes = props.allValues.sort().map(
-            (value) => <li key={value}>
+        const categoryFilterRecord = new FilterRecord({'name': props.categoryName})
+        const checkboxes = props.allValues.sort().map(value => {
+            const filterRecord = categoryFilterRecord.set('value', value);
+            return <li key={value}>
                 <label style={props.availableValues.includes(value) ? {fontWeight: 'bold'} : {fontWeight: 'normal'}}>
                     <input
                         onChange={props.onChangeHandler}
                         type='checkbox'
                         name={props.categoryName}
                         value={value}
-                        checked={props.filterFeatures.some(x => (x.get('name')===props.categoryName && x.get('value')===value) ? true : false)} />
+                        checked={props.filterFeatures.some(x => x.equals(filterRecord) ? true : false)} />
                     {value}
                 </label>
             </li>
-        );
+        });
         return <ul>{checkboxes}</ul>;
     }
 
@@ -44,7 +46,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
         availableFeatures:Immutable.Map<string, Immutable.List<string>>;
         onSelectCategoryHandler:(event) => void;
     }> = (props) => {
-        const categories = props.allFeatures.keySeq().sort().map(function(category) {
+        const categories = props.allFeatures.keySeq().sort().map(category => {
             const availableValuesCount = (props.availableFeatures.has(category) ? props.availableFeatures.get(category).size : 0);
             return <button
                     key={category}
@@ -62,14 +64,14 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
         filterFeatures:Immutable.List<FilterRecord>;
         handleRemoveFilter:(event) => void;
     }> = (props) => {
-        const selected = props.filterFeatures.sort((a, b) => a.compare(b)).map( filter => {
-            <button
+        const selected = props.filterFeatures.sort((a, b) => a.compare(b)).map(filter => {
+            return <button
                 key={filter.composeString()}
                 name={filter.get('name')}
                 value={filter.get('value')}
                 className={'util-button'}
                 onClick={props.handleRemoveFilter}>
-            {filter}
+            {filter.composeString()}
             </button>
         })
         return <div><p>Remove filter: {selected}</p></div>;
