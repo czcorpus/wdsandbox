@@ -58,6 +58,8 @@ export function createRootComponent({dispatcher, onResize, viewUtils}:InitIntArg
             filterFeaturesHistory: Immutable.List([Immutable.List([])]),
             showCategory: null,
             requestUrl: "http://localhost:8080/",
+            posField: "pos",
+            featureField: "ufeat",
         }
     );
     return sandboxViewInit(dispatcher, viewUtils, tagBuilderModel);
