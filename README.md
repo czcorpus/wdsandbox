@@ -3,7 +3,7 @@
 ## How to install and run
 
 1) install Node.JS and npm
-2) clone the project: git clone https://github.com/tomachalek/wdsandbox.git
+2) clone the project: git clone https://github.com/czcorpus/wdsandbox.git
 3) run `npm install`
 4) compile the server code: `make server`
 5) in a new shell (from the same directory), run `node dist-server/service.js`
