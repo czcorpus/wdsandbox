@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Action, IActionDispatcher, IStatelessModel, StatefulModel } from 'kombo';
+import { Action, IActionDispatcher, IStatelessModel, StatefulModel, IActionCapturer } from 'kombo';
 import { BehaviorSubject, Observable, Subscription, Subject, of as rxOf } from 'rxjs';
 import { scan, startWith, flatMap } from 'rxjs/operators';
 
@@ -42,9 +42,9 @@ export class ServerSideActionDispatcher implements IActionDispatcher {
         return this.actions.subscribe(model.onAction.bind(model));
     }
 
-    registerModel<T>(model: IStatelessModel<T>, initialState: T): BehaviorSubject<T> {
+    registerModel<T>(model:IStatelessModel<T, {}>, initialState: T): [BehaviorSubject<T>, Subscription] {
         const state$ = new BehaviorSubject(initialState);
-        this.actions.pipe(
+        const subscr = this.actions.pipe(
             startWith(null),
             scan(
                 (state:T, action:Action<{}>) => {
@@ -59,6 +59,8 @@ export class ServerSideActionDispatcher implements IActionDispatcher {
                 initialState
             )
         ).subscribe(state$);
-        return state$;
+        return [state$, subscr];
     }
+
+    captureAction(actionName: string, capturer: IActionCapturer): void {}
 }

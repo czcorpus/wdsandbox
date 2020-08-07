@@ -19,12 +19,11 @@ import { Express, Request } from 'express';
 import { ViewUtils } from 'kombo';
 import * as React from 'react';
 import { renderToString } from 'react-dom/server';
-import * as Immutable from 'immutable';
 import * as cors from 'cors';
+import { Dict, pipe, List } from 'cnc-tskit';
 
 import { AppTools } from '../appTools';
 import { encodeArgs } from '../common/ajax';
-import { AvailableLanguage } from '../common/hostPage';
 import { SandboxConf} from '../conf';
 import { GlobalComponents } from '../views/global';
 import { init as layoutViewInit, LayoutProps } from '../views/layout';
@@ -51,7 +50,14 @@ function renderResult({layoutView, sandboxConf, returnUrl, rootView, isMobile}:R
             layoutView,
             {
                 sandboxConf: sandboxConf,
-                uiLanguages: Immutable.List<AvailableLanguage>(Object.entries(sandboxConf.translations)),
+                uiLanguages: pipe(
+                    sandboxConf.translations,
+                    Dict.keys(),
+                    List.map(v => ({
+                        code: v,
+                        label: v
+                    })),
+                ),
                 uiLang: sandboxConf.uiLang,
                 returnUrl: returnUrl,
                 RootComponent: rootView,
