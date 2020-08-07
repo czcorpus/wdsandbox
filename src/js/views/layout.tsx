@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as Immutable from 'immutable';
+
 import { ViewUtils } from 'kombo';
 import * as React from 'react';
 import { resolve as urlResolve } from 'url';
@@ -29,7 +29,7 @@ import { SandboxConf } from '../conf';
 
 export interface LayoutProps {
     sandboxConf:SandboxConf;
-    uiLanguages:Immutable.List<AvailableLanguage>;
+    uiLanguages:Array<AvailableLanguage>;
     uiLang:string;
     returnUrl:string;
     RootComponent:React.ComponentType<SandboxRootComponentProps>;
@@ -57,7 +57,7 @@ export function init(ut:ViewUtils<GlobalComponents>):React.SFC<LayoutProps> {
                     <header className="sandbox-header">
                         <h1>
                             <a href={props.sandboxConf.rootUrl} title={ut.translate('global__sandbox_title')}>
-                                ÚČNK web-dev sandbox
+                                CNC web-dev sandbox
                             </a>
                         </h1>
                         <em>{ut.translate('global__sandbox_subtitle')}</em>

@@ -96,7 +96,7 @@ export function init(dispatcher:IActionDispatcher, ut:ViewUtils<GlobalComponents
     const SandboxRootComponent:React.SFC<SandboxRootComponentProps> = (props) => {
         return (
             <div className="SandboxRootComponent">
-                <BoundWidget version="2019-08-02" />
+                <BoundWidget version="2020-08-07" />
             </div>
         );
     }

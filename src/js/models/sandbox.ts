@@ -18,6 +18,7 @@
 
 import { StatelessModel, Action, SEDispatcher } from 'kombo';
 import { ActionName, Actions, CoreActionName, CoreActions } from './actions';
+import { timestamp } from 'rxjs/operators';
 
 
 export interface MyModelState {
@@ -31,40 +32,20 @@ export class MyModel extends StatelessModel<MyModelState> {
 
     constructor(dispatcher, initialState:MyModelState)  {
         super(dispatcher, initialState);
-        this.actionMatch = {
-            [ActionName.ClickFooButton]: (state, action:Actions.ClickFooButton) => {
-                const newState = this.copyState(state);
-                newState.numOfClicks += 1;
-                return newState;
-            },
-            [ActionName.ClickDoubleValueButton]: (state, action:Actions.ClickDoubleValueButton) => {
-                const newState = this.copyState(state);
-                newState.isBusy = true;
-                return newState;
-            },
-            [ActionName.DoubleOperationDone]: (state, action:Actions.DoubleOperationDone) => {
-                const newState = this.copyState(state);
-                newState.isBusy = false;
-                newState.numOfClicks = action.payload.result;
-                return newState;
-            },
-            [CoreActionName.SetScreenMode]: (state, action:CoreActions.SetScreenMode) => {
-                const newState = this.copyState(state);
-                newState.screenMode = {
-                    width: action.payload.innerWidth,
-                    height: action.payload.innerHeight,
-                    isMobile: action.payload.isMobile
-                };
-                return newState;
+
+        this.addActionHandler<Actions.ClickFooButton>(
+            ActionName.ClickFooButton,
+            (state, action:Actions.ClickFooButton) => {
+                state.numOfClicks += 1;
             }
-        };
-    }
+        );
 
-
-
-    sideEffects(state:MyModelState, action:Action, dispatch:SEDispatcher):void {
-        switch (action.name) {
-            case ActionName.ClickDoubleValueButton:
+        this.addActionHandler<Actions.ClickDoubleValueButton>(
+            ActionName.ClickDoubleValueButton,
+            (state, action) => {
+                state.isBusy = true;
+            },
+            (state, action, dispatch) => {
                 setTimeout(() => {
                     dispatch<Actions.DoubleOperationDone>({
                         name: ActionName.DoubleOperationDone,
@@ -73,7 +54,26 @@ export class MyModel extends StatelessModel<MyModelState> {
                         }
                     });
                 }, 2000);
-            break;
-        }
+            }
+        );
+
+        this.addActionHandler<Actions.DoubleOperationDone>(
+            ActionName.DoubleOperationDone,
+            (state, action) => {
+                state.isBusy = false;
+                state.numOfClicks = action.payload.result;
+            }
+        );
+
+        this.addActionHandler<CoreActions.SetScreenMode>(
+            CoreActionName.SetScreenMode,
+            (state, action) => {
+                state.screenMode = {
+                    width: action.payload.innerWidth,
+                    height: action.payload.innerHeight,
+                    isMobile: action.payload.isMobile
+                };
+            }
+        );
     }
 }
