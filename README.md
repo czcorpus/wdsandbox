@@ -1,5 +1,7 @@
 # Web-devel sandbox
 
+:sleeping: currently, the project is a bit outdated compared with actual state of recent CNC applications hosted on GitHub. :sleeping:
+
 ## How to install and run
 
 1) install Node.JS and npm
